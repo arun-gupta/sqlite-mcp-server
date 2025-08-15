@@ -80,23 +80,26 @@ echo '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"run_query"
 
 **List all tables:**
 ```bash
-curl -X POST http://localhost:4000/tools/call \
-  -H "Content-Type: application/json" \
-  -d '{"name":"list_tables","arguments":{}}'
+curl http://localhost:4000/tables
 ```
 
 **Get user table schema:**
 ```bash
-curl -X POST http://localhost:4000/tools/call \
-  -H "Content-Type: application/json" \
-  -d '{"name":"describe_table","arguments":{"table_name":"users"}}'
+curl http://localhost:4000/tables/users
 ```
 
 **Query all users:**
 ```bash
-curl -X POST http://localhost:4000/tools/call \
+curl -X POST http://localhost:4000/query \
   -H "Content-Type: application/json" \
-  -d '{"name":"run_query","arguments":{"query":"SELECT * FROM users"}}'
+  -d '{"query":"SELECT * FROM users"}'
+```
+
+**Alternative: Use generic tool endpoint:**
+```bash
+curl -X POST http://localhost:4000/tools/list_tables \
+  -H "Content-Type: application/json" \
+  -d '{"arguments":{}}'
 ```
 
 #### Test HTTP Wrapper (Postman)
