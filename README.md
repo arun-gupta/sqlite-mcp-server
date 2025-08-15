@@ -319,34 +319,7 @@ docker run -d --name sqlite-prod -v /var/lib/sqlite:/data arungupta/sqlite-mcp-s
 
 
 
-## Testing
 
-### Quick Test
-
-After running the quickstart script, you can test the server with a simple command:
-
-```bash
-# Test listing tables
-echo '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"list_tables","arguments":{}}}' | node src/server.js
-
-# Test querying users
-echo '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"run_query","arguments":{"query":"SELECT * FROM users WHERE active = 1"}}}' | node src/server.js
-```
-
-### HTTP Wrapper for Postman
-
-For easier testing with Postman or other HTTP clients, use the HTTP wrapper:
-
-```bash
-# Start the HTTP wrapper (default port 4000)
-npm run http
-
-# Start with custom port
-HTTP_PORT=8080 npm run http
-
-# Or use quickstart script (starts both MCP and HTTP)
-./quickstart.sh
-```
 
 #### Available HTTP Endpoints:
 
