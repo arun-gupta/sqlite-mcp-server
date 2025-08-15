@@ -99,7 +99,7 @@ echo "   curl http://localhost:$HTTP_PORT/health"
 echo "   curl http://localhost:$HTTP_PORT/tables"
 echo ""
 echo "💡 Test MCP protocol:"
-echo "   echo '{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"tools/call\",\"params\":{\"name\":\"list_tables\",\"arguments\":{}}}' | node src/mcp-server.js"
+echo "   echo '{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"tools/call\",\"params\":{\"name\":\"list_tables\",\"arguments\":{}}}' | node src/server.js"
 echo ""
 echo "🛑 Press Ctrl+C to stop all servers"
 echo "================================"
@@ -107,18 +107,23 @@ echo "================================"
 # Function to cleanup background processes
 cleanup() {
     echo ""
-    echo "🛑 Stopping server..."
-    kill $DUAL_PID 2>/dev/null || true
+    echo "🛑 Stopping servers..."
+    kill $MCP_PID $HTTP_PID 2>/dev/null || true
     exit 0
 }
 
 # Set trap to cleanup on exit
 trap cleanup SIGINT SIGTERM
 
-# Start dual MCP/HTTP server in background
-echo "🚀 Starting dual MCP/HTTP server..."
-node src/dual-server.js &
-DUAL_PID=$!
+# Start MCP server in background
+echo "🔧 Starting MCP server..."
+node src/server.js &
+MCP_PID=$!
 
-# Wait for the dual server
-wait $DUAL_PID
+# Start HTTP wrapper in background (optional)
+echo "🌐 Starting HTTP wrapper server..."
+node src/http-wrapper.js &
+HTTP_PID=$!
+
+# Wait for both processes
+wait $MCP_PID $HTTP_PID

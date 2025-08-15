@@ -8,9 +8,7 @@
             "start": "node src/server.js",
         "dev": "node --watch src/server.js",
         "test": "node test/test.js",
-        "http": "node src/http-wrapper.js",
-        "dual": "node src/dual-server.js",
-        "mcp": "node src/mcp-server.js"
+        "http": "node src/http-wrapper.js"
   },
   "keywords": [
     "mcp",

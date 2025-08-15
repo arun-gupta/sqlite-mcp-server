@@ -41,5 +41,5 @@ ENV HTTP_PORT=4000
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD node -e "console.log('Health check passed')" || exit 1
 
-# Start the dual MCP/HTTP server
-CMD ["node", "src/dual-server.js"]
+# Start the standard MCP server
+CMD ["node", "src/server.js"]
