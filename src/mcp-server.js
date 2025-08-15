@@ -3,15 +3,9 @@
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { CallToolRequestSchema, ListToolsRequestSchema } from '@modelcontextprotocol/sdk/types.js';
-import express from 'express';
 import sqlite3 from 'sqlite3';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-class DualMCPServer {
+class MCPServer {
   constructor() {
     this.mcpServer = new Server(
       {
@@ -25,18 +19,10 @@ class DualMCPServer {
       }
     );
 
-    this.httpApp = express();
-    this.port = process.env.HTTP_PORT || 4000;
     this.db = null;
-    this.dbPath = process.env.SQLITE_DB_PATH || ':memory:';
+    this.dbPath = process.env.SQLITE_DB_PATH || 'test.db';
     
     this.setupMCPHandlers();
-    this.setupHTTPHandlers();
-    this.setupLogging();
-  }
-
-  setupLogging() {
-    console.error('[DUAL] Logging setup complete');
   }
 
   setupMCPHandlers() {
@@ -182,243 +168,6 @@ class DualMCPServer {
         };
       }
     });
-  }
-
-  setupHTTPHandlers() {
-    this.httpApp.use(express.json());
-    this.httpApp.use(express.urlencoded({ extended: true }));
-    
-    // CORS for Postman
-    this.httpApp.use((req, res, next) => {
-      res.header('Access-Control-Allow-Origin', '*');
-      res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-      res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-      if (req.method === 'OPTIONS') {
-        res.sendStatus(200);
-      } else {
-        next();
-      }
-    });
-
-    // Logging middleware
-    this.httpApp.use((req, res, next) => {
-      console.error(`[HTTP] ${req.method} ${req.path}`, req.body);
-      next();
-    });
-
-    // Health check
-    this.httpApp.get('/health', (req, res) => {
-      res.json({ status: 'ok', service: 'sqlite-mcp-dual-server' });
-    });
-
-    // Get server info
-    this.httpApp.get('/info', async (req, res) => {
-      try {
-        const result = await this.sendMCPMessage({
-          jsonrpc: '2.0',
-          id: Date.now(),
-          method: 'initialize',
-          params: {
-            protocolVersion: '2024-11-05',
-            capabilities: { tools: {} },
-            clientInfo: { name: 'http-wrapper', version: '1.0.0' }
-          }
-        });
-        res.json(result);
-      } catch (error) {
-        res.status(500).json({ error: error.message });
-      }
-    });
-
-    // List available tools
-    this.httpApp.get('/tools', async (req, res) => {
-      try {
-        const result = await this.sendMCPMessage({
-          jsonrpc: '2.0',
-          id: Date.now(),
-          method: 'tools/list',
-          params: {}
-        });
-        res.json(result);
-      } catch (error) {
-        res.status(500).json({ error: error.message });
-      }
-    });
-
-    // Execute a tool
-    this.httpApp.post('/tools/:toolName', async (req, res) => {
-      try {
-        const { toolName } = req.params;
-        const { arguments: args = {} } = req.body;
-
-        const result = await this.sendMCPMessage({
-          jsonrpc: '2.0',
-          id: Date.now(),
-          method: 'tools/call',
-          params: {
-            name: toolName,
-            arguments: args
-          }
-        });
-        res.json(result);
-      } catch (error) {
-        res.status(500).json({ error: error.message });
-      }
-    });
-
-    // Convenience endpoints
-    this.httpApp.get('/tables', async (req, res) => {
-      try {
-        const result = await this.sendMCPMessage({
-          jsonrpc: '2.0',
-          id: Date.now(),
-          method: 'tools/call',
-          params: {
-            name: 'list_tables',
-            arguments: {}
-          }
-        });
-        res.json(result);
-      } catch (error) {
-        res.status(500).json({ error: error.message });
-      }
-    });
-
-    this.httpApp.get('/tables/:tableName', async (req, res) => {
-      try {
-        const { tableName } = req.params;
-        const result = await this.sendMCPMessage({
-          jsonrpc: '2.0',
-          id: Date.now(),
-          method: 'tools/call',
-          params: {
-            name: 'describe_table',
-            arguments: { table_name: tableName }
-          }
-        });
-        res.json(result);
-      } catch (error) {
-        res.status(500).json({ error: error.message });
-      }
-    });
-
-    this.httpApp.post('/query', async (req, res) => {
-      try {
-        const { query } = req.body;
-        if (!query) {
-          return res.status(400).json({ error: 'Query is required' });
-        }
-
-        const result = await this.sendMCPMessage({
-          jsonrpc: '2.0',
-          id: Date.now(),
-          method: 'tools/call',
-          params: {
-            name: 'run_query',
-            arguments: { query }
-          }
-        });
-        res.json(result);
-      } catch (error) {
-        res.status(500).json({ error: error.message });
-      }
-    });
-
-    this.httpApp.post('/tables/:tableName/insert', async (req, res) => {
-      try {
-        const { tableName } = req.params;
-        const { data } = req.body;
-        
-        if (!data) {
-          return res.status(400).json({ error: 'Data is required' });
-        }
-
-        const result = await this.sendMCPMessage({
-          jsonrpc: '2.0',
-          id: Date.now(),
-          method: 'tools/call',
-          params: {
-            name: 'insert_row',
-            arguments: { table_name: tableName, data }
-          }
-        });
-        res.json(result);
-      } catch (error) {
-        res.status(500).json({ error: error.message });
-      }
-    });
-
-    this.httpApp.put('/tables/:tableName/update', async (req, res) => {
-      try {
-        const { tableName } = req.params;
-        const { data, where } = req.body;
-        
-        if (!data || !where) {
-          return res.status(400).json({ error: 'Data and where conditions are required' });
-        }
-
-        const result = await this.sendMCPMessage({
-          jsonrpc: '2.0',
-          id: Date.now(),
-          method: 'tools/call',
-          params: {
-            name: 'update_row',
-            arguments: { table_name: tableName, data, where }
-          }
-        });
-        res.json(result);
-      } catch (error) {
-        res.status(500).json({ error: error.message });
-      }
-    });
-
-    this.httpApp.delete('/tables/:tableName/delete', async (req, res) => {
-      try {
-        const { tableName } = req.params;
-        const { where } = req.body;
-        
-        if (!where) {
-          return res.status(400).json({ error: 'Where conditions are required' });
-        }
-
-        const result = await this.sendMCPMessage({
-          jsonrpc: '2.0',
-          id: Date.now(),
-          method: 'tools/call',
-          params: {
-            name: 'delete_row',
-            arguments: { table_name: tableName, where }
-          }
-        });
-        res.json(result);
-      } catch (error) {
-        res.status(500).json({ error: error.message });
-      }
-    });
-
-    // 404 handler
-    this.httpApp.use('*', (req, res) => {
-      res.status(404).json({
-        error: 'Endpoint not found',
-        availableEndpoints: [
-          'GET /health',
-          'GET /info',
-          'GET /tools',
-          'POST /tools/:toolName',
-          'GET /tables',
-          'GET /tables/:tableName',
-          'POST /query',
-          'POST /tables/:tableName/insert',
-          'PUT /tables/:tableName/update',
-          'DELETE /tables/:tableName/delete'
-        ]
-      });
-    });
-  }
-
-  async sendMCPMessage(message) {
-    // Use the internal MCP server directly
-    return await this.mcpServer.handleRequest(message);
   }
 
   async connectDatabase() {
@@ -626,59 +375,15 @@ class DualMCPServer {
   }
 
   async start() {
-    // Check if we should run in MCP-only mode (when stdin is not a TTY)
-    const isMCPServerOnly = !process.stdin.isTTY;
-    
-    if (isMCPServerOnly) {
-      // MCP-only mode for direct stdio communication
-      console.error('[MCP] Starting MCP server in stdio mode');
-      const transport = new StdioServerTransport();
-      await this.mcpServer.connect(transport);
-      console.error('[MCP] Server started and listening on stdio');
-    } else {
-      // Full dual mode with HTTP server
-      try {
-        // Start HTTP server
-        this.httpApp.listen(this.port, () => {
-          console.error(`🚀 Dual MCP/HTTP Server started`);
-          console.error(`🌐 HTTP API: http://localhost:${this.port}`);
-          console.error(`🔧 MCP Protocol: Available via stdio`);
-          console.error(`📊 Database: ${this.dbPath}`);
-          console.error('');
-          console.error('📋 Available HTTP endpoints:');
-          console.error('  GET  /health                    - Health check');
-          console.error('  GET  /info                      - Server info');
-          console.error('  GET  /tools                     - List available tools');
-          console.error('  POST /tools/:toolName           - Execute specific tool');
-          console.error('  GET  /tables                    - List all tables');
-          console.error('  GET  /tables/:tableName         - Describe table schema');
-          console.error('  POST /query                     - Run SQL query');
-          console.error('  POST /tables/:tableName/insert  - Insert row');
-          console.error('  PUT  /tables/:tableName/update  - Update rows');
-          console.error('  DELETE /tables/:tableName/delete - Delete rows');
-          console.error('');
-          console.error('💡 Import the Postman collection from examples/postman-collection.json');
-        });
-
-        // Start MCP server
-        const transport = new StdioServerTransport();
-        await this.mcpServer.connect(transport);
-        console.error('[MCP] Server started and listening on stdio');
-      } catch (error) {
-        console.error('[ERROR] Failed to start HTTP server:', error.message);
-        console.error('[INFO] Starting in MCP-only mode...');
-        
-        // Fallback to MCP-only mode
-        const transport = new StdioServerTransport();
-        await this.mcpServer.connect(transport);
-        console.error('[MCP] Server started and listening on stdio');
-      }
-    }
+    console.error('[MCP] Starting MCP server in stdio mode');
+    const transport = new StdioServerTransport();
+    await this.mcpServer.connect(transport);
+    console.error('[MCP] Server started and listening on stdio');
   }
 }
 
-// Start the dual server
-const server = new DualMCPServer();
+// Start the MCP server
+const server = new MCPServer();
 server.start().catch((error) => {
   console.error('[FATAL] Server failed to start:', error);
   process.exit(1);

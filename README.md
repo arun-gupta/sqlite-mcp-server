@@ -490,7 +490,7 @@ This server is designed to be compatible with the Docker MCP Catalog. The `mcp.j
 - **Version**: 1.0.0
 - **Description**: SQLite database operations via MCP
 - **Author**: Your Name
-- **License**: MIT
+- **License**: Apache 2.0
 
 ## Development
 
@@ -559,32 +559,8 @@ Enable verbose logging by setting the environment variable:
 export DEBUG=1
 ```
 
-## Contributing
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests for new functionality
-5. Submit a pull request
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Support
-
-For issues and questions:
-
-1. Check the troubleshooting section
-2. Review the example messages in `examples/mcp-messages.md`
-3. Open an issue on the repository
-
-## Changelog
-
-### Version 1.0.0
-- Initial release
-- Basic SQLite operations (CRUD)
-- MCP protocol implementation
-- Docker support
-- Comprehensive logging
-- Security features
+This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
