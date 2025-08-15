@@ -14,7 +14,7 @@ NC='\033[0m' # No Color
 
 # Default values
 CONTAINER_NAME="sqlite-mcp"
-IMAGE_NAME="arungupta/sqlite-mcp-server"
+IMAGE_NAME="sqlite-mcp-server"
 DATA_DIR="./data"
 DB_PATH="/data/database.db"
 HTTP_PORT="4000"

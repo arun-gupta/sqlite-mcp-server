@@ -31,6 +31,8 @@ A Model Context Protocol (MCP) server that provides SQLite database operations t
 
 Get up and running in seconds with our quickstart script:
 
+### Option 1: Local Development
+
 ```bash
 # Clone the repository
 git clone <repository-url>
@@ -54,6 +56,25 @@ The servers will be running with a sample database containing:
 **Available servers:**
 - **MCP Server**: Ready for stdio communication
 - **HTTP Server**: Available at http://localhost:4000 for Postman/curl testing
+
+### Option 2: Use Pre-built Docker Image
+
+If you want to try it immediately without building:
+
+```bash
+# Create data directory
+mkdir -p data
+
+# Run with pre-built image
+docker run -d \
+  --name sqlite-mcp \
+  -v $(pwd)/data:/data \
+  -e SQLITE_DB_PATH=/data/database.db \
+  arungupta/sqlite-mcp-server
+
+# Test it
+echo '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"list_tables","arguments":{}}}' | docker exec -i sqlite-mcp node src/server.js
+```
 
 ### Quick Testing
 
@@ -182,12 +203,21 @@ npm run docker:clean
 
 #### Manual Docker Commands
 
-1. Build the Docker image:
+1. Build the Docker image (local development):
 ```bash
-docker build -t arungupta/sqlite-mcp-server .
+docker build -t sqlite-mcp-server .
 ```
 
 2. Run the container (MCP server only):
+```bash
+docker run -d \
+  --name sqlite-mcp \
+  -v /path/to/database:/data \
+  -e SQLITE_DB_PATH=/data/database.db \
+  sqlite-mcp-server
+```
+
+**Or use the pre-built image directly:**
 ```bash
 docker run -d \
   --name sqlite-mcp \
@@ -211,10 +241,17 @@ The Docker image runs a **standard MCP server** that implements the Model Contex
 ### Running the Container
 
 ```bash
-# Build the image
-docker build -t arungupta/sqlite-mcp-server .
+# Build the image (local development)
+docker build -t sqlite-mcp-server .
 
 # Run MCP server (stdio communication only)
+docker run -d \
+  --name sqlite-mcp \
+  -v /path/to/database:/data \
+  -e SQLITE_DB_PATH=/data/database.db \
+  sqlite-mcp-server
+
+# Or use the pre-built image directly
 docker run -d \
   --name sqlite-mcp \
   -v /path/to/database:/data \
@@ -583,8 +620,9 @@ This server is designed to be compatible with the Docker MCP Catalog. The `mcp.j
 - **Name**: arungupta/sqlite-mcp-server
 - **Version**: 1.0.0
 - **Description**: SQLite database operations via MCP
-- **Author**: Your Name
+- **Author**: Arun Gupta
 - **License**: Apache 2.0
+- **Docker Hub**: `arungupta/sqlite-mcp-server`
 
 ## Development
 
@@ -624,8 +662,11 @@ To add a new tool:
 ./docker-run.sh build
 ./docker-run.sh run
 
-# Or manually
-docker build -t arungupta/sqlite-mcp-server .
+# Or manually (local development)
+docker build -t sqlite-mcp-server .
+docker run -d --name sqlite-mcp -v /data/sqlite:/data -e SQLITE_DB_PATH=/data/production.db sqlite-mcp-server
+
+# Or use pre-built image
 docker run -d --name sqlite-mcp -v /data/sqlite:/data -e SQLITE_DB_PATH=/data/production.db arungupta/sqlite-mcp-server
 ```
 
