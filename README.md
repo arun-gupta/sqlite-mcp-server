@@ -189,16 +189,23 @@ echo '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"run_query"
 For easier testing with Postman or other HTTP clients, use the HTTP wrapper:
 
 ```bash
-# Start the HTTP wrapper
+# Start the HTTP wrapper (default port 4000)
 npm run http
+
+# Start with custom port
+HTTP_PORT=8080 npm run http
 ```
 
 **Or use the quickstart script to start both servers:**
 ```bash
+# Start with default port 4000
 ./quickstart.sh
+
+# Start with custom port
+HTTP_PORT=8080 ./quickstart.sh
 ```
 
-This starts an HTTP server on `http://localhost:3000` that translates HTTP requests to MCP protocol messages.
+This starts an HTTP server that translates HTTP requests to MCP protocol messages.
 
 #### Available HTTP Endpoints:
 
@@ -228,17 +235,20 @@ Import the provided Postman collection for easy testing:
 
 ```bash
 # List tables
-curl http://localhost:3000/tables
+curl http://localhost:4000/tables
 
 # Run a query
-curl -X POST http://localhost:3000/query \
+curl -X POST http://localhost:4000/query \
   -H "Content-Type: application/json" \
   -d '{"query": "SELECT * FROM users WHERE active = 1"}'
 
 # Insert a user
-curl -X POST http://localhost:3000/tables/users/insert \
+curl -X POST http://localhost:4000/tables/users/insert \
   -H "Content-Type: application/json" \
   -d '{"data": {"name": "Alice Johnson", "email": "alice@example.com"}}'
+
+# With custom port (e.g., 8080)
+curl http://localhost:8080/tables
 ```
 
 ### Full Test Suite

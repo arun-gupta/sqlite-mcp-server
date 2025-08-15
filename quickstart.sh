@@ -37,13 +37,15 @@ echo "🗄️  Setting up sample database..."
 node examples/setup-database.js
 echo "✅ Sample database created at test.db"
 
-# Set environment variable
+# Set environment variables
 export SQLITE_DB_PATH=test.db
+export HTTP_PORT=${HTTP_PORT:-4000}
 
 echo ""
 echo "🎯 Starting MCP and HTTP Servers..."
 echo "================================"
 echo "📊 Database: test.db"
+echo "🌐 HTTP Port: $HTTP_PORT (set HTTP_PORT env var to change)"
 echo "🔧 MCP Tools available:"
 echo "   - list_tables"
 echo "   - describe_table"
@@ -52,7 +54,7 @@ echo "   - insert_row"
 echo "   - update_row"
 echo "   - delete_row"
 echo ""
-echo "🌐 HTTP Server: http://localhost:3000"
+echo "🌐 HTTP Server: http://localhost:$HTTP_PORT"
 echo "📋 HTTP Endpoints:"
 echo "   - GET  /health                    - Health check"
 echo "   - GET  /tables                    - List all tables"
@@ -65,8 +67,8 @@ echo "💡 Test with Postman:"
 echo "   Import examples/postman-collection.json"
 echo ""
 echo "💡 Test with curl:"
-echo "   curl http://localhost:3000/health"
-echo "   curl http://localhost:3000/tables"
+echo "   curl http://localhost:$HTTP_PORT/health"
+echo "   curl http://localhost:$HTTP_PORT/tables"
 echo ""
 echo "🛑 Press Ctrl+C to stop all servers"
 echo "================================"
