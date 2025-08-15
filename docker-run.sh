@@ -100,8 +100,8 @@ run_mcp() {
     docker rm $CONTAINER_NAME 2>/dev/null || true
     
     print_status "Starting MCP server container..."
-    print_status "Note: MCP servers run on-demand, not as persistent daemons"
-    print_status "Container will start and stop as needed for each request"
+    print_status "Note: MCP server supports multiple requests in a single session"
+    print_status "Server runs on-demand and handles stdio communication"
     
     # Test the MCP server with a simple request
     print_status "Testing MCP server..."

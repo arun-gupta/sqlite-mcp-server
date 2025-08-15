@@ -215,7 +215,7 @@ The Docker image runs a **standard MCP server** that implements the Model Contex
 # Build the image (local development)
 docker build -t sqlite-mcp-server .
 
-# Test MCP server with a single request
+# Test MCP server (supports multiple requests)
 echo '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"list_tables","arguments":{}}}' | \
 docker run --rm -i \
   -v $(pwd)/data:/data \
@@ -231,8 +231,8 @@ docker run --rm -i \
 ```
 
 **Note:** 
-- MCP servers communicate via stdio and run on-demand
-- Each request starts a fresh container instance
+- MCP server supports multiple sequential requests in a single session
+- Server runs on-demand and handles stdio communication
 - For persistent HTTP access, use the HTTP wrapper: `./docker-run.sh run-http`
 - For production use with AI assistants, the MCP client manages container lifecycle
 
