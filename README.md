@@ -311,50 +311,7 @@ export SQLITE_DB_PATH=:memory:
 docker run -v /path/to/database:/data -e SQLITE_DB_PATH=/data/database.db ...
 ```
 
-### Example Workflows
 
-**Development:**
-```bash
-# Start both MCP and HTTP locally
-./quickstart.sh
-
-# Use HTTP API for testing
-curl http://localhost:4000/health
-```
-
-**Production:**
-```bash
-# Start container for AI assistant integration
-docker run -d --name sqlite-prod -v /var/lib/sqlite:/data arungupta/sqlite-mcp-server
-```
-
-
-
-
-
-#### Available HTTP Endpoints
-
-The HTTP wrapper provides both convenience endpoints and MCP protocol endpoints. For detailed documentation, see [docs/http-wrapper.md](docs/http-wrapper.md).
-
-**Quick Examples:**
-```bash
-# List tables (convenience endpoint)
-curl http://localhost:4000/tables
-
-# Run query (convenience endpoint)
-curl -X POST http://localhost:4000/query \
-  -H "Content-Type: application/json" \
-  -d '{"query": "SELECT * FROM users"}'
-
-# Execute tool (MCP protocol)
-curl -X POST http://localhost:4000/tools/call \
-  -H "Content-Type: application/json" \
-  -d '{"name": "list_tables", "arguments": {}}'
-```
-
-#### Postman Collection
-
-Import `examples/postman-collection.json` for comprehensive testing. See [docs/http-wrapper.md](docs/http-wrapper.md) for detailed usage instructions.
 
 ### Full Test Suite
 

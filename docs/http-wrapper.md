@@ -20,6 +20,23 @@ The SQLite MCP Server includes an optional HTTP wrapper that provides REST-like 
 - `PUT /tables/:tableName/update` - Update rows
 - `DELETE /tables/:tableName/delete` - Delete rows
 
+## Example Workflows
+
+### Development
+```bash
+# Start both MCP and HTTP locally
+./quickstart.sh
+
+# Use HTTP API for testing
+curl http://localhost:4000/health
+```
+
+### Production
+```bash
+# Start container for AI assistant integration
+docker run -d --name sqlite-prod -v /var/lib/sqlite:/data arungupta/sqlite-mcp-server
+```
+
 ## Understanding the Dual-Layer Architecture
 
 The HTTP wrapper demonstrates two ways to access the same functionality:
