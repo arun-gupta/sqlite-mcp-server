@@ -35,12 +35,16 @@ This script will:
 - ✅ Check Node.js version (requires 18+)
 - ✅ Install dependencies automatically
 - ✅ Create a sample database with test data
-- ✅ Start the MCP server ready for use
+- ✅ Start both MCP server and HTTP wrapper server
 
-The server will be running with a sample database containing:
+The servers will be running with a sample database containing:
 - 3 users (John Doe, Jane Smith, Bob Johnson)
 - 3 categories (Technology, Travel, Food)
 - 4 sample posts with relationships
+
+**Available servers:**
+- **MCP Server**: Ready for stdio communication
+- **HTTP Server**: Available at http://localhost:3000 for Postman/curl testing
 
 ## Installation
 
@@ -187,6 +191,11 @@ For easier testing with Postman or other HTTP clients, use the HTTP wrapper:
 ```bash
 # Start the HTTP wrapper
 npm run http
+```
+
+**Or use the quickstart script to start both servers:**
+```bash
+./quickstart.sh
 ```
 
 This starts an HTTP server on `http://localhost:3000` that translates HTTP requests to MCP protocol messages.

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # SQLite MCP Server Quickstart Script
-# This script sets up a sample database and starts the MCP server
+# This script sets up a sample database and starts both MCP and HTTP servers
 
 set -e  # Exit on any error
 
@@ -41,10 +41,10 @@ echo "✅ Sample database created at test.db"
 export SQLITE_DB_PATH=test.db
 
 echo ""
-echo "🎯 Starting MCP Server..."
+echo "🎯 Starting MCP and HTTP Servers..."
 echo "================================"
 echo "📊 Database: test.db"
-echo "🔧 Tools available:"
+echo "🔧 MCP Tools available:"
 echo "   - list_tables"
 echo "   - describe_table"
 echo "   - run_query"
@@ -52,11 +52,48 @@ echo "   - insert_row"
 echo "   - update_row"
 echo "   - delete_row"
 echo ""
-echo "💡 Test the server with:"
-echo "   echo '{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"tools/call\",\"params\":{\"name\":\"list_tables\",\"arguments\":{}}}' | node src/server.js"
+echo "🌐 HTTP Server: http://localhost:3000"
+echo "📋 HTTP Endpoints:"
+echo "   - GET  /health                    - Health check"
+echo "   - GET  /tables                    - List all tables"
+echo "   - POST /query                     - Run SQL query"
+echo "   - POST /tables/:tableName/insert  - Insert row"
+echo "   - PUT  /tables/:tableName/update  - Update rows"
+echo "   - DELETE /tables/:tableName/delete - Delete rows"
 echo ""
-echo "🛑 Press Ctrl+C to stop the server"
+echo "💡 Test with Postman:"
+echo "   Import examples/postman-collection.json"
+echo ""
+echo "💡 Test with curl:"
+echo "   curl http://localhost:3000/health"
+echo "   curl http://localhost:3000/tables"
+echo ""
+echo "🛑 Press Ctrl+C to stop all servers"
 echo "================================"
 
-# Start the MCP server
-node src/server.js
+# Function to cleanup background processes
+cleanup() {
+    echo ""
+    echo "🛑 Stopping servers..."
+    kill $MCP_PID $HTTP_PID 2>/dev/null || true
+    exit 0
+}
+
+# Set trap to cleanup on exit
+trap cleanup SIGINT SIGTERM
+
+# Start HTTP wrapper server in background
+echo "🌐 Starting HTTP wrapper server..."
+node src/http-wrapper.js &
+HTTP_PID=$!
+
+# Wait a moment for HTTP server to start
+sleep 2
+
+# Start MCP server in background (for stdio communication)
+echo "🔧 Starting MCP server..."
+node src/server.js &
+MCP_PID=$!
+
+# Wait for both processes
+wait $HTTP_PID $MCP_PID
