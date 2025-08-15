@@ -76,26 +76,18 @@ echo "================================"
 # Function to cleanup background processes
 cleanup() {
     echo ""
-    echo "🛑 Stopping servers..."
-    kill $MCP_PID $HTTP_PID 2>/dev/null || true
+    echo "🛑 Stopping server..."
+    kill $DUAL_PID 2>/dev/null || true
     exit 0
 }
 
 # Set trap to cleanup on exit
 trap cleanup SIGINT SIGTERM
 
-# Start HTTP wrapper server in background
-echo "🌐 Starting HTTP wrapper server..."
-node src/http-wrapper.js &
-HTTP_PID=$!
+# Start dual MCP/HTTP server in background
+echo "🚀 Starting dual MCP/HTTP server..."
+node src/dual-server.js &
+DUAL_PID=$!
 
-# Wait a moment for HTTP server to start
-sleep 2
-
-# Start MCP server in background (for stdio communication)
-echo "🔧 Starting MCP server..."
-node src/server.js &
-MCP_PID=$!
-
-# Wait for both processes
-wait $HTTP_PID $MCP_PID
+# Wait for the dual server
+wait $DUAL_PID

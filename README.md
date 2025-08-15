@@ -4,7 +4,7 @@ A Model Context Protocol (MCP) server that provides SQLite database operations t
 
 ## Features
 
-- **Dual Interface**: HTTP API for testing + MCP protocol for AI assistants
+- **True Dual Interface**: Single server exposing both HTTP API and MCP protocol simultaneously
 - **List Tables**: Discover all tables in the database
 - **Describe Schema**: Get detailed information about table structure
 - **Run Queries**: Execute SELECT queries with security validation
@@ -109,7 +109,7 @@ curl -X POST http://localhost:4000/query \
 
 ## Docker Usage
 
-The Docker image supports both MCP protocol communication and HTTP API access, giving you flexibility in how you interact with the SQLite database.
+The Docker image runs a **dual MCP/HTTP server** that exposes both MCP protocol and HTTP API simultaneously in a single container, giving you maximum flexibility in how you interact with the SQLite database.
 
 ### Running the Container
 
@@ -117,7 +117,7 @@ The Docker image supports both MCP protocol communication and HTTP API access, g
 # Build the image
 docker build -t sqlite-mcp-server .
 
-# Run with HTTP API access
+# Run with both HTTP API and MCP protocol access
 docker run -d \
   --name sqlite-mcp \
   -p 4000:4000 \
@@ -161,10 +161,11 @@ curl -X DELETE http://localhost:4000/tables/users/delete \
 
 ### Using MCP Protocol (For AI Assistants)
 
-The container also supports the Model Context Protocol for integration with AI assistants and MCP clients:
+The same container also supports the Model Context Protocol for integration with AI assistants and MCP clients:
 
 ```bash
-# Run container for MCP protocol (no port exposure needed)
+# The container supports both HTTP and MCP simultaneously
+# For MCP-only usage, you can omit port mapping:
 docker run -d \
   --name sqlite-mcp-mcp \
   -v /path/to/database:/data \
@@ -213,32 +214,50 @@ docker run -d --name sqlite-prod -v /var/lib/sqlite:/data sqlite-mcp-server
 # The container communicates via stdio for MCP protocol
 ```
 
-**Hybrid Usage:**
+**Hybrid Usage (Default):**
 ```bash
-# Start container with both HTTP and MCP support
+# Start container with both HTTP and MCP support (this is the default)
 docker run -d --name sqlite-hybrid -p 4000:4000 -v /data:/data sqlite-mcp-server
 
 # Use HTTP API for monitoring and testing
 curl http://localhost:4000/health
 
 # Use MCP protocol for AI assistant integration
-# Container supports both simultaneously
+# Container supports both simultaneously in a single process
 ```
 
 ## Usage
 
-The SQLite MCP Server provides two ways to interact with your database:
+The SQLite MCP Server provides a **true dual interface** - a single server that exposes both HTTP API and MCP protocol simultaneously.
 
-### 1. HTTP API (Recommended for Testing)
+### Dual Server (Recommended)
 
-Use standard HTTP requests for easy testing and integration:
+The dual server runs both interfaces in a single process:
 
 ```bash
-# Start the HTTP wrapper
-npm run http
+# Start the dual server
+npm run dual
 
 # Or use the quickstart script
 ./quickstart.sh
+```
+
+**Benefits of the dual server:**
+- ✅ **Single process** - No need to manage multiple servers
+- ✅ **Shared database connection** - Better performance and consistency
+- ✅ **True simultaneous access** - Both HTTP and MCP work at the same time
+- ✅ **Simplified deployment** - One container, both interfaces
+
+### Individual Servers (Legacy)
+
+You can still run individual servers if needed:
+
+```bash
+# HTTP API only
+npm run http
+
+# MCP Protocol only
+npm start
 ```
 
 **Available HTTP endpoints:**
@@ -249,7 +268,7 @@ npm run http
 - `PUT /tables/:tableName/update` - Update rows
 - `DELETE /tables/:tableName/delete` - Delete rows
 
-### 2. MCP Protocol (For AI Assistants)
+### MCP Protocol (For AI Assistants)
 
 The server implements the Model Context Protocol and can be integrated with any MCP-compatible client. The server communicates via stdio and supports the following tools:
 

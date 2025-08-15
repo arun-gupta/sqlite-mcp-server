@@ -105,7 +105,7 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"data\": {\n    \"name\": \"Alice Johnson\",\n    \"email\": \"alice@example.com\"\n  }\n}"
+          "raw": "{\n  \"data\": {\n    \"name\": \"Test User for Delete\",\n    \"email\": \"test-delete@example.com\"\n  }\n}"
         },
         "url": {
           "raw": "{{baseUrl}}/tables/users/insert",
@@ -147,7 +147,7 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"where\": {\n    \"id\": 4\n  }\n}"
+          "raw": "{\n  \"where\": {\n    \"email\": \"test-delete@example.com\"\n  }\n}"
         },
         "url": {
           "raw": "{{baseUrl}}/tables/users/delete",
