@@ -143,7 +143,7 @@ docker run -d \
 echo '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"list_tables","arguments":{}}}' | docker exec -i sqlite-mcp node src/server.js
 ```
 
-**Note:** The Docker container runs the standard MCP server for AI assistant integration. For HTTP testing, use the HTTP wrapper locally or the Docker scripts.
+**Note:** The Docker container runs the standard MCP server for AI assistant integration. For HTTP testing, use the HTTP wrapper locally or the Docker scripts with `run-http` mode.
 
 ## Docker Usage
 
@@ -155,7 +155,7 @@ The Docker image runs a **standard MCP server** that implements the Model Contex
 # Build the image
 docker build -t sqlite-mcp-server .
 
-# Run MCP server (no port exposure needed for stdio communication)
+# Run MCP server (stdio communication only)
 docker run -d \
   --name sqlite-mcp \
   -v /path/to/database:/data \
@@ -165,7 +165,22 @@ docker run -d \
 
 ### Using HTTP Wrapper (For Testing)
 
-For testing and development, you can run the HTTP wrapper locally:
+For testing and development, you have several options:
+
+**Option 1: Use Docker Scripts (Recommended)**
+```bash
+# Run with HTTP wrapper on port 4000
+./docker-run.sh run-http
+
+# Run with HTTP wrapper on custom port
+./docker-run.sh run-custom 8080
+```
+
+**Option 2: Run HTTP Wrapper Locally**
+```bash
+# Start HTTP wrapper locally
+npm run http
+```
 
 ```bash
 # Health check
