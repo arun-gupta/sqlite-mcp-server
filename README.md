@@ -4,16 +4,23 @@ A Model Context Protocol (MCP) server that provides SQLite database operations t
 
 ## Features
 
-- **Standard MCP Server**: Clean MCP protocol implementation for Docker and AI assistants
-- **List Tables**: Discover all tables in the database
-- **Describe Schema**: Get detailed information about table structure
-- **Run Queries**: Execute SELECT queries with security validation
-- **Insert Data**: Add new rows to tables
-- **Update Data**: Modify existing rows based on conditions
-- **Delete Data**: Remove rows based on conditions
+### Core MCP Server
+- **Standard MCP Protocol**: Clean implementation for AI assistants and MCP clients
+- **Database Operations**: List tables, describe schema, run queries, insert/update/delete data
+- **Security**: SELECT-only queries with parameterized statements to prevent SQL injection
 - **Comprehensive Logging**: Debug incoming requests and outgoing responses
-- **Docker Ready**: Containerized for easy deployment
-- **Postman Collection**: Ready-to-use API testing collection
+
+### Development & Testing
+- **HTTP Wrapper**: Optional HTTP API for easy testing with Postman/curl
+- **Postman Collection**: Ready-to-use API testing collection with examples
+- **Quickstart Script**: Automated setup with database creation and server startup
+- **Port Conflict Resolution**: Automatic detection and resolution of port conflicts
+
+### Deployment & Integration
+- **Docker Ready**: Containerized for easy deployment and MCP Catalog compatibility
+- **Docker Scripts**: Comprehensive Docker management with build, run, stop, and monitoring
+- **Environment Configuration**: Flexible database path and port configuration
+- **Production Ready**: Non-root user, health checks, and proper error handling
 
 ## Prerequisites
 
