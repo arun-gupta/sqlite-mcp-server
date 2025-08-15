@@ -142,7 +142,8 @@ run_http() {
         -v "$(pwd)/$DATA_DIR:/data" \
         -e SQLITE_DB_PATH=$DB_PATH \
         -e HTTP_PORT=4000 \
-        $IMAGE_NAME
+        $IMAGE_NAME \
+        node src/http-wrapper.js
     
     print_status "Container started successfully!"
     print_status "Container name: $container_name"
