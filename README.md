@@ -55,6 +55,43 @@ The servers will be running with a sample database containing:
 - **MCP Server**: Ready for stdio communication
 - **HTTP Server**: Available at http://localhost:4000 for Postman/curl testing
 
+### Quick Testing
+
+Once the servers are running, you can quickly test both interfaces:
+
+#### Test MCP Server (stdio)
+```bash
+# List all tables
+echo '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"list_tables","arguments":{}}}' | node src/server.js
+
+# Get user table schema
+echo '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"describe_table","arguments":{"table_name":"users"}}}' | node src/server.js
+
+# Query all users
+echo '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"run_query","arguments":{"query":"SELECT * FROM users"}}}' | node src/server.js
+```
+
+#### Test HTTP Wrapper (curl)
+```bash
+# List all tables
+curl -X POST http://localhost:4000/tools/call \
+  -H "Content-Type: application/json" \
+  -d '{"name":"list_tables","arguments":{}}'
+
+# Get user table schema
+curl -X POST http://localhost:4000/tools/call \
+  -H "Content-Type: application/json" \
+  -d '{"name":"describe_table","arguments":{"table_name":"users"}}'
+
+# Query all users
+curl -X POST http://localhost:4000/tools/call \
+  -H "Content-Type: application/json" \
+  -d '{"name":"run_query","arguments":{"query":"SELECT * FROM users"}}'
+```
+
+#### Test HTTP Wrapper (Postman)
+Import the provided Postman collection from `examples/postman-collection.json` for a complete set of pre-configured requests.
+
 ## Installation
 
 ### Local Development
