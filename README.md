@@ -180,6 +180,58 @@ echo '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"list_table
 echo '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"run_query","arguments":{"query":"SELECT * FROM users WHERE active = 1"}}}' | node src/server.js
 ```
 
+### HTTP Wrapper for Postman
+
+For easier testing with Postman or other HTTP clients, use the HTTP wrapper:
+
+```bash
+# Start the HTTP wrapper
+npm run http
+```
+
+This starts an HTTP server on `http://localhost:3000` that translates HTTP requests to MCP protocol messages.
+
+#### Available HTTP Endpoints:
+
+**Basic Operations:**
+- `GET /health` - Health check
+- `GET /info` - Server information
+- `GET /tools` - List available tools
+- `POST /tools/:toolName` - Execute specific tool
+
+**Convenience Endpoints:**
+- `GET /tables` - List all tables
+- `GET /tables/:tableName` - Describe table schema
+- `POST /query` - Run SQL query
+- `POST /tables/:tableName/insert` - Insert row
+- `PUT /tables/:tableName/update` - Update rows
+- `DELETE /tables/:tableName/delete` - Delete rows
+
+#### Postman Collection
+
+Import the provided Postman collection for easy testing:
+1. Open Postman
+2. Click "Import"
+3. Select `examples/postman-collection.json`
+4. The collection includes all endpoints with sample requests
+
+#### Example HTTP Requests:
+
+```bash
+# List tables
+curl http://localhost:3000/tables
+
+# Run a query
+curl -X POST http://localhost:3000/query \
+  -H "Content-Type: application/json" \
+  -d '{"query": "SELECT * FROM users WHERE active = 1"}'
+
+# Insert a user
+curl -X POST http://localhost:3000/tables/users/insert \
+  -H "Content-Type: application/json" \
+  -d '{"data": {"name": "Alice Johnson", "email": "alice@example.com"}}'
+```
+
 ### Full Test Suite
 
 Run the complete test suite to verify all functionality:

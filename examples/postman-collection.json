@@ -1,0 +1,286 @@
+{
+  "info": {
+    "name": "SQLite MCP Server HTTP Wrapper",
+    "description": "Collection for testing the SQLite MCP Server via HTTP wrapper",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/health",
+          "host": ["{{baseUrl}}"],
+          "path": ["health"]
+        }
+      }
+    },
+    {
+      "name": "Server Info",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/info",
+          "host": ["{{baseUrl}}"],
+          "path": ["info"]
+        }
+      }
+    },
+    {
+      "name": "List Tools",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/tools",
+          "host": ["{{baseUrl}}"],
+          "path": ["tools"]
+        }
+      }
+    },
+    {
+      "name": "List Tables",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/tables",
+          "host": ["{{baseUrl}}"],
+          "path": ["tables"]
+        }
+      }
+    },
+    {
+      "name": "Describe Table",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/tables/users",
+          "host": ["{{baseUrl}}"],
+          "path": ["tables", "users"]
+        }
+      }
+    },
+    {
+      "name": "Run Query",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"query\": \"SELECT * FROM users WHERE active = 1\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/query",
+          "host": ["{{baseUrl}}"],
+          "path": ["query"]
+        }
+      }
+    },
+    {
+      "name": "Insert Row",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"data\": {\n    \"name\": \"Alice Johnson\",\n    \"email\": \"alice@example.com\"\n  }\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/tables/users/insert",
+          "host": ["{{baseUrl}}"],
+          "path": ["tables", "users", "insert"]
+        }
+      }
+    },
+    {
+      "name": "Update Row",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"data\": {\n    \"email\": \"john.updated@example.com\"\n  },\n  \"where\": {\n    \"id\": 1\n  }\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/tables/users/update",
+          "host": ["{{baseUrl}}"],
+          "path": ["tables", "users", "update"]
+        }
+      }
+    },
+    {
+      "name": "Delete Row",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"where\": {\n    \"id\": 4\n  }\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/tables/users/delete",
+          "host": ["{{baseUrl}}"],
+          "path": ["tables", "users", "delete"]
+        }
+      }
+    },
+    {
+      "name": "Execute Tool - List Tables",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"arguments\": {}\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/tools/list_tables",
+          "host": ["{{baseUrl}}"],
+          "path": ["tools", "list_tables"]
+        }
+      }
+    },
+    {
+      "name": "Execute Tool - Describe Table",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"arguments\": {\n    \"table_name\": \"posts\"\n  }\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/tools/describe_table",
+          "host": ["{{baseUrl}}"],
+          "path": ["tools", "describe_table"]
+        }
+      }
+    },
+    {
+      "name": "Execute Tool - Run Query",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"arguments\": {\n    \"query\": \"SELECT p.title, u.name FROM posts p JOIN users u ON p.user_id = u.id\"\n  }\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/tools/run_query",
+          "host": ["{{baseUrl}}"],
+          "path": ["tools", "run_query"]
+        }
+      }
+    },
+    {
+      "name": "Execute Tool - Insert Row",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"arguments\": {\n    \"table_name\": \"categories\",\n    \"data\": {\n      \"name\": \"Science\",\n      \"description\": \"Scientific articles and research\"\n    }\n  }\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/tools/insert_row",
+          "host": ["{{baseUrl}}"],
+          "path": ["tools", "insert_row"]
+        }
+      }
+    },
+    {
+      "name": "Execute Tool - Update Row",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"arguments\": {\n    \"table_name\": \"categories\",\n    \"data\": {\n      \"description\": \"Updated description for Science category\"\n    },\n    \"where\": {\n      \"name\": \"Science\"\n    }\n  }\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/tools/update_row",
+          "host": ["{{baseUrl}}"],
+          "path": ["tools", "update_row"]
+        }
+      }
+    },
+    {
+      "name": "Execute Tool - Delete Row",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"arguments\": {\n    \"table_name\": \"categories\",\n    \"where\": {\n      \"name\": \"Science\"\n    }\n  }\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/tools/delete_row",
+          "host": ["{{baseUrl}}"],
+          "path": ["tools", "delete_row"]
+        }
+      }
+    }
+  ]
+}
