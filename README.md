@@ -484,25 +484,7 @@ sqlite-mcp-server/
 └── README.md           # This file
 ```
 
-### Adding New Tools
 
-To add a new tool:
-
-1. Add the tool definition to the `ListToolsRequestSchema` handler
-2. Add a case in the `CallToolRequestSchema` handler
-3. Implement the tool method in the `SQLiteMCPServer` class
-4. Update the documentation and examples
-
-### Building for Production
-
-```bash
-# Build and run with Docker scripts (recommended)
-./docker-run.sh build
-./docker-run.sh run
-
-# Or use pre-built image directly
-docker run -d --name sqlite-mcp -v /data/sqlite:/data -e SQLITE_DB_PATH=/data/production.db arungupta/sqlite-mcp-server
-```
 
 ## Troubleshooting
 
