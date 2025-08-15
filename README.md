@@ -46,7 +46,7 @@ The servers will be running with a sample database containing:
 
 **Available servers:**
 - **MCP Server**: Ready for stdio communication
-- **HTTP Server**: Available at http://localhost:3000 for Postman/curl testing
+- **HTTP Server**: Available at http://localhost:4000 for Postman/curl testing
 
 ## Installation
 
@@ -63,14 +63,16 @@ cd sqlite-mcp-server
 npm install
 ```
 
-3. Set the database path environment variable:
+3. Start the server:
 ```bash
-export SQLITE_DB_PATH=/path/to/your/database.db
-```
-
-4. Start the server:
-```bash
+# MCP server only
 npm start
+
+# HTTP wrapper for testing
+npm run http
+
+# Both servers (recommended)
+./quickstart.sh
 ```
 
 ### Docker Deployment
@@ -182,6 +184,7 @@ For testing and development, you have several options:
 npm run http
 ```
 
+**Example HTTP requests:**
 ```bash
 # Health check
 curl http://localhost:4000/health
@@ -193,21 +196,6 @@ curl http://localhost:4000/tables
 curl -X POST http://localhost:4000/query \
   -H "Content-Type: application/json" \
   -d '{"query": "SELECT * FROM users"}'
-
-# Insert a new user
-curl -X POST http://localhost:4000/tables/users/insert \
-  -H "Content-Type: application/json" \
-  -d '{"data": {"name": "John Doe", "email": "john@example.com"}}'
-
-# Update a user
-curl -X PUT http://localhost:4000/tables/users/update \
-  -H "Content-Type: application/json" \
-  -d '{"data": {"email": "john.updated@example.com"}, "where": {"id": 1}}'
-
-# Delete a user
-curl -X DELETE http://localhost:4000/tables/users/delete \
-  -H "Content-Type: application/json" \
-  -d '{"where": {"email": "john@example.com"}}'
 ```
 
 ### Using MCP Protocol (For AI Assistants)
@@ -215,9 +203,8 @@ curl -X DELETE http://localhost:4000/tables/users/delete \
 The Docker container implements the Model Context Protocol for integration with AI assistants and MCP clients:
 
 ```bash
-# The container communicates via stdio for MCP protocol
-# Use with MCP clients that support stdio transport
-# No port mapping needed - communication is via stdio
+# Test MCP protocol directly
+echo '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"list_tables","arguments":{}}}' | docker exec -i sqlite-mcp node src/server.js
 ```
 
 ### Configuration Options
@@ -234,38 +221,19 @@ The Docker container implements the Model Context Protocol for integration with 
 
 ### Example Workflows
 
-**Development with HTTP Wrapper:**
-```bash
-# Run HTTP wrapper locally for testing
-npm run http
-
-# Use Postman collection
-# Import examples/postman-collection.json and test all endpoints
-
-# Use curl for quick tests
-curl http://localhost:4000/health
-curl http://localhost:4000/tables
-```
-
-**Production with MCP Protocol:**
-```bash
-# Start container for AI assistant integration
-docker run -d --name sqlite-prod -v /var/lib/sqlite:/data sqlite-mcp-server
-
-# Configure MCP client to use this container
-# The container communicates via stdio for MCP protocol
-```
-
-**Local Development:**
+**Development:**
 ```bash
 # Start both MCP and HTTP locally
 ./quickstart.sh
 
 # Use HTTP API for testing
 curl http://localhost:4000/health
+```
 
-# Use MCP protocol for AI assistant integration
-# Both servers run independently
+**Production:**
+```bash
+# Start container for AI assistant integration
+docker run -d --name sqlite-prod -v /var/lib/sqlite:/data sqlite-mcp-server
 ```
 
 ## Usage
@@ -415,18 +383,10 @@ npm run http
 
 # Start with custom port
 HTTP_PORT=8080 npm run http
-```
 
-**Or use the quickstart script to start both servers:**
-```bash
-# Start with default port 4000
+# Or use quickstart script (starts both MCP and HTTP)
 ./quickstart.sh
-
-# Start with custom port
-HTTP_PORT=8080 ./quickstart.sh
 ```
-
-This starts an HTTP server that translates HTTP requests to MCP protocol messages.
 
 #### Available HTTP Endpoints:
 
@@ -515,14 +475,6 @@ curl -X POST http://localhost:4000/query \
 curl -X POST http://localhost:4000/tables/users/insert \
   -H "Content-Type: application/json" \
   -d '{"data": {"name": "Test User", "email": "test@example.com"}}'
-
-# Delete the user we just created
-curl -X DELETE http://localhost:4000/tables/users/delete \
-  -H "Content-Type: application/json" \
-  -d '{"where": {"email": "test@example.com"}}'
-
-# With custom port (e.g., 8080)
-curl http://localhost:8080/tables
 ```
 
 ### Full Test Suite
@@ -584,15 +536,18 @@ This server is designed to be compatible with the Docker MCP Catalog. The `mcp.j
 ```
 sqlite-mcp-server/
 ├── src/
-│   └── server.js          # Main MCP server implementation
+│   ├── server.js          # Main MCP server implementation
+│   └── http-wrapper.js    # HTTP wrapper for testing
 ├── test/
 │   └── test.js           # Test suite
 ├── examples/
-│   └── mcp-messages.md   # Example MCP messages
+│   ├── setup-database.js  # Database setup script
+│   └── postman-collection.json # Postman collection
 ├── package.json          # Node.js dependencies
 ├── mcp.json             # MCP manifest
 ├── Dockerfile           # Docker configuration
-├── .dockerignore        # Docker ignore file
+├── docker-run.sh        # Docker management script
+├── quickstart.sh        # Quick setup script
 └── README.md           # This file
 ```
 
@@ -608,15 +563,13 @@ To add a new tool:
 ### Building for Production
 
 ```bash
-# Build Docker image
-docker build -t sqlite-mcp-server .
+# Build and run with Docker scripts
+./docker-run.sh build
+./docker-run.sh run
 
-# Run with persistent storage
-docker run -d \
-  --name sqlite-mcp \
-  -v /data/sqlite:/data \
-  -e SQLITE_DB_PATH=/data/production.db \
-  sqlite-mcp-server
+# Or manually
+docker build -t sqlite-mcp-server .
+docker run -d --name sqlite-mcp -v /data/sqlite:/data -e SQLITE_DB_PATH=/data/production.db sqlite-mcp-server
 ```
 
 ## Troubleshooting
