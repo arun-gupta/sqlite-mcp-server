@@ -78,14 +78,32 @@ npm start
 docker build -t sqlite-mcp-server .
 ```
 
-2. Run the container:
+2. Run the container with HTTP access:
 ```bash
 docker run -d \
   --name sqlite-mcp \
+  -p 4000:4000 \
   -v /path/to/database:/data \
   -e SQLITE_DB_PATH=/data/database.db \
+  -e HTTP_PORT=4000 \
   sqlite-mcp-server
 ```
+
+3. Access the HTTP API:
+```bash
+# Health check
+curl http://localhost:4000/health
+
+# List tables
+curl http://localhost:4000/tables
+
+# Run a query
+curl -X POST http://localhost:4000/query \
+  -H "Content-Type: application/json" \
+  -d '{"query": "SELECT * FROM users"}'
+```
+
+**Note:** The Docker container runs the HTTP wrapper by default, which provides both HTTP API access and MCP protocol support.
 
 ## Usage
 
@@ -231,6 +249,11 @@ Import the provided Postman collection for easy testing:
 3. Select `examples/postman-collection.json`
 4. The collection includes all endpoints with sample requests
 
+**Note:** The delete operations in the collection are designed to work with the insert operations. The workflow is:
+1. Run "Insert Row" to add a test user with email "test-delete@example.com"
+2. Run "Delete Row" to delete that same user using the email as the condition
+This ensures the delete operation will always work with fresh data.
+
 #### Example HTTP Requests:
 
 ```bash
@@ -245,7 +268,12 @@ curl -X POST http://localhost:4000/query \
 # Insert a user
 curl -X POST http://localhost:4000/tables/users/insert \
   -H "Content-Type: application/json" \
-  -d '{"data": {"name": "Alice Johnson", "email": "alice@example.com"}}'
+  -d '{"data": {"name": "Test User", "email": "test@example.com"}}'
+
+# Delete the user we just created
+curl -X DELETE http://localhost:4000/tables/users/delete \
+  -H "Content-Type: application/json" \
+  -d '{"where": {"email": "test@example.com"}}'
 
 # With custom port (e.g., 8080)
 curl http://localhost:8080/tables

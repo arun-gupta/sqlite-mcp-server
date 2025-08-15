@@ -30,15 +30,16 @@ RUN chown -R nodejs:nodejs /app && \
 # Switch to non-root user
 USER nodejs
 
-# Expose port (though MCP typically uses stdio)
-EXPOSE 3000
+# Expose HTTP port
+EXPOSE 4000
 
-# Set environment variable for database path
+# Set environment variables
 ENV SQLITE_DB_PATH=/data/database.db
+ENV HTTP_PORT=4000
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD node -e "console.log('Health check passed')" || exit 1
 
-# Start the MCP server
-CMD ["node", "src/server.js"]
+# Start the HTTP wrapper (which internally starts the MCP server)
+CMD ["node", "src/http-wrapper.js"]
