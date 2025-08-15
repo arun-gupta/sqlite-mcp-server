@@ -100,19 +100,26 @@ run_mcp() {
     docker rm $CONTAINER_NAME 2>/dev/null || true
     
     print_status "Starting MCP server container..."
-    docker run -d \
-        --name $CONTAINER_NAME \
+    print_status "Note: MCP servers run on-demand, not as persistent daemons"
+    print_status "Container will start and stop as needed for each request"
+    
+    # Test the MCP server with a simple request
+    print_status "Testing MCP server..."
+    echo '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"list_tables","arguments":{}}}' | \
+    docker run --rm -i \
         -v "$(pwd)/$DATA_DIR:/data" \
         -e SQLITE_DB_PATH=$DB_PATH \
         $IMAGE_NAME
     
-    print_status "Container started successfully!"
+    print_status "MCP server test completed!"
     print_status "Container name: $CONTAINER_NAME"
     print_status "Data directory: $(pwd)/$DATA_DIR"
     print_status "Database path: $DB_PATH"
     echo ""
-    print_status "To view logs: $0 logs"
-    print_status "To stop container: $0 stop"
+    print_status "To test manually:"
+    print_status "  echo '{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"tools/call\",\"params\":{\"name\":\"list_tables\",\"arguments\":{}}}' | docker run --rm -i -v \$(pwd)/$DATA_DIR:/data -e SQLITE_DB_PATH=$DB_PATH $IMAGE_NAME"
+    echo ""
+    print_status "For HTTP testing, use: $0 run-http"
 }
 
 # Function to run with HTTP wrapper

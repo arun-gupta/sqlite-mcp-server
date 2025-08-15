@@ -209,27 +209,32 @@ The Docker image runs a **standard MCP server** that implements the Model Contex
 
 ### Running the Container
 
+**Important:** MCP servers are designed to run on-demand, not as persistent daemons. Each request starts a new container instance.
+
 ```bash
 # Build the image (local development)
 docker build -t sqlite-mcp-server .
 
-# Run MCP server (stdio communication only)
-docker run -d \
-  --name sqlite-mcp \
-  -v /path/to/database:/data \
+# Test MCP server with a single request
+echo '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"list_tables","arguments":{}}}' | \
+docker run --rm -i \
+  -v $(pwd)/data:/data \
   -e SQLITE_DB_PATH=/data/database.db \
   sqlite-mcp-server
 
 # Or use the pre-built image directly
-docker run -d \
-  --name sqlite-mcp \
-  -v /path/to/database:/data \
+echo '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"list_tables","arguments":{}}}' | \
+docker run --rm -i \
+  -v $(pwd)/data:/data \
   -e SQLITE_DB_PATH=/data/database.db \
   arungupta/sqlite-mcp-server
-
-# Test the MCP server
-echo '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"list_tables","arguments":{}}}' | docker exec -i sqlite-mcp node src/server.js
 ```
+
+**Note:** 
+- MCP servers communicate via stdio and run on-demand
+- Each request starts a fresh container instance
+- For persistent HTTP access, use the HTTP wrapper: `./docker-run.sh run-http`
+- For production use with AI assistants, the MCP client manages container lifecycle
 
 ### Using HTTP Wrapper (For Testing)
 
@@ -270,7 +275,7 @@ The Docker container implements the Model Context Protocol for integration with 
 
 ```bash
 # Test MCP protocol directly
-echo '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"list_tables","arguments":{}}}' | docker exec -i sqlite-mcp node src/server.js
+echo '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"list_tables","arguments":{}}}' | docker run --rm -i -v $(pwd)/data:/data -e SQLITE_DB_PATH=/data/database.db sqlite-mcp-server
 ```
 
 ### Configuration Options
