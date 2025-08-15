@@ -196,8 +196,17 @@ class SQLiteMCPServer {
               if (err) {
                 console.error(`[DB] Failed to enable foreign keys:`, err);
               }
-              console.error(`[DB] Connected successfully`);
-              resolve();
+              
+              // Enable WAL mode for better concurrent access
+              this.db.run('PRAGMA journal_mode = WAL', (err) => {
+                if (err) {
+                  console.error('[DB] Warning: Could not enable WAL mode:', err);
+                } else {
+                  console.error('[DB] WAL mode enabled for better performance');
+                }
+                console.error(`[DB] Connected successfully`);
+                resolve();
+              });
             });
           }
         });
@@ -390,6 +399,34 @@ class SQLiteMCPServer {
     const transport = new StdioServerTransport();
     await this.server.connect(transport);
     console.error('[MCP] Server started and listening on stdio');
+    
+    // Keep the server running and handle multiple requests
+    process.on('SIGINT', () => {
+      console.error('[MCP] Received SIGINT, shutting down gracefully...');
+      this.cleanup();
+      process.exit(0);
+    });
+    
+    process.on('SIGTERM', () => {
+      console.error('[MCP] Received SIGTERM, shutting down gracefully...');
+      this.cleanup();
+      process.exit(0);
+    });
+    
+    // Keep the process alive
+    process.stdin.resume();
+  }
+  
+  async cleanup() {
+    if (this.db) {
+      this.db.close((err) => {
+        if (err) {
+          console.error('[DB] Error closing database:', err);
+        } else {
+          console.error('[DB] Database connection closed');
+        }
+      });
+    }
   }
 }
 
