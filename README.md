@@ -236,17 +236,21 @@ docker run --rm -i \
 - For persistent HTTP access, use the HTTP wrapper: `./docker-run.sh run-http`
 - For production use with AI assistants, the MCP client manages container lifecycle
 
-### Using Docker Scripts (Recommended)
+## Testing
 
-For easy Docker management, use the provided scripts:
+For testing and development, you have several options:
 
-**MCP Server (On-demand):**
+### 1. MCP Server Testing
+
+#### Using Docker Scripts (Recommended)
 ```bash
 # Test MCP server with Docker
 ./docker-run.sh run
 ```
 
-**HTTP Wrapper (Persistent):**
+### 2. HTTP Wrapper Testing
+
+#### Using Docker Scripts (Recommended)
 ```bash
 # Run with HTTP wrapper on port 4000
 ./docker-run.sh run-http
@@ -255,26 +259,13 @@ For easy Docker management, use the provided scripts:
 ./docker-run.sh run-custom 8080
 ```
 
-### Using HTTP Wrapper (For Testing)
-
-For testing and development, you have several options:
-
-**Option 1: Use Docker Scripts (Recommended)**
-```bash
-# Run with HTTP wrapper on port 4000
-./docker-run.sh run-http
-
-# Run with HTTP wrapper on custom port
-./docker-run.sh run-custom 8080
-```
-
-**Option 2: Run HTTP Wrapper Locally**
+#### Running Locally
 ```bash
 # Start HTTP wrapper locally
 npm run http
 ```
 
-**Example HTTP requests:**
+#### Example HTTP Requests (curl)
 ```bash
 # Health check
 curl http://localhost:4000/health
