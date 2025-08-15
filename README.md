@@ -75,37 +75,75 @@ npm start
 
 ### Docker Deployment
 
+#### Using Docker Scripts (Recommended)
+
+We provide convenient scripts for Docker management:
+
+```bash
+# Build the image
+./docker-run.sh build
+
+# Run MCP server (stdio only)
+./docker-run.sh run
+
+# Run with HTTP wrapper on port 4000
+./docker-run.sh run-http
+
+# Run with HTTP wrapper on custom port
+./docker-run.sh run-custom 8080
+
+# Stop containers
+./docker-run.sh stop
+
+# View logs
+./docker-run.sh logs
+
+# Check status
+./docker-run.sh status
+```
+
+#### Using npm Scripts
+
+```bash
+# Build the image
+npm run docker:build
+
+# Run MCP server
+npm run docker:run
+
+# Run with HTTP wrapper
+npm run docker:run-http
+
+# Stop containers
+npm run docker:stop
+
+# Clean containers
+npm run docker:clean
+```
+
+#### Manual Docker Commands
+
 1. Build the Docker image:
 ```bash
 docker build -t sqlite-mcp-server .
 ```
 
-2. Run the container with HTTP access:
+2. Run the container (MCP server only):
 ```bash
 docker run -d \
   --name sqlite-mcp \
-  -p 4000:4000 \
   -v /path/to/database:/data \
   -e SQLITE_DB_PATH=/data/database.db \
-  -e HTTP_PORT=4000 \
   sqlite-mcp-server
 ```
 
-3. Access the HTTP API:
+3. Access the MCP server:
 ```bash
-# Health check
-curl http://localhost:4000/health
-
-# List tables
-curl http://localhost:4000/tables
-
-# Run a query
-curl -X POST http://localhost:4000/query \
-  -H "Content-Type: application/json" \
-  -d '{"query": "SELECT * FROM users"}'
+# Test MCP protocol
+echo '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"list_tables","arguments":{}}}' | docker exec -i sqlite-mcp node src/server.js
 ```
 
-**Note:** The Docker container runs the HTTP wrapper by default, which provides both HTTP API access and MCP protocol support.
+**Note:** The Docker container runs the standard MCP server for AI assistant integration. For HTTP testing, use the HTTP wrapper locally or the Docker scripts.
 
 ## Docker Usage
 

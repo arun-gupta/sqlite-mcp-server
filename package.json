@@ -8,7 +8,12 @@
             "start": "node src/server.js",
         "dev": "node --watch src/server.js",
         "test": "node test/test.js",
-        "http": "node src/http-wrapper.js"
+        "http": "node src/http-wrapper.js",
+        "docker:build": "docker build -t sqlite-mcp-server .",
+        "docker:run": "docker run -d --name sqlite-mcp -v $(pwd)/data:/data -e SQLITE_DB_PATH=/data/database.db sqlite-mcp-server",
+        "docker:run-http": "docker run -d --name sqlite-mcp-http -p 4000:4000 -v $(pwd)/data:/data -e SQLITE_DB_PATH=/data/database.db -e HTTP_PORT=4000 sqlite-mcp-server",
+        "docker:stop": "docker stop sqlite-mcp sqlite-mcp-http 2>/dev/null || true",
+        "docker:clean": "docker rm sqlite-mcp sqlite-mcp-http 2>/dev/null || true"
   },
   "keywords": [
     "mcp",
