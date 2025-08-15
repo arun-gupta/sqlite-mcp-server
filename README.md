@@ -60,30 +60,40 @@ The servers will be running with a sample database containing:
 Once the servers are running, you can quickly test both interfaces:
 
 #### Test MCP Server (stdio)
+
+**List all tables:**
 ```bash
-# List all tables
 echo '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"list_tables","arguments":{}}}' | SQLITE_DB_PATH=test.db node src/server.js
+```
 
-# Get user table schema
+**Get user table schema:**
+```bash
 echo '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"describe_table","arguments":{"table_name":"users"}}}' | SQLITE_DB_PATH=test.db node src/server.js
+```
 
-# Query all users
+**Query all users:**
+```bash
 echo '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"run_query","arguments":{"query":"SELECT * FROM users"}}}' | SQLITE_DB_PATH=test.db node src/server.js
 ```
 
 #### Test HTTP Wrapper (curl)
+
+**List all tables:**
 ```bash
-# List all tables
 curl -X POST http://localhost:4000/tools/call \
   -H "Content-Type: application/json" \
   -d '{"name":"list_tables","arguments":{}}'
+```
 
-# Get user table schema
+**Get user table schema:**
+```bash
 curl -X POST http://localhost:4000/tools/call \
   -H "Content-Type: application/json" \
   -d '{"name":"describe_table","arguments":{"table_name":"users"}}'
+```
 
-# Query all users
+**Query all users:**
+```bash
 curl -X POST http://localhost:4000/tools/call \
   -H "Content-Type: application/json" \
   -d '{"name":"run_query","arguments":{"query":"SELECT * FROM users"}}'
