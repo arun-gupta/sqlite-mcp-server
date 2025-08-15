@@ -184,7 +184,7 @@ npm run docker:clean
 
 1. Build the Docker image:
 ```bash
-docker build -t sqlite-mcp-server .
+docker build -t arungupta/sqlite-mcp-server .
 ```
 
 2. Run the container (MCP server only):
@@ -193,7 +193,7 @@ docker run -d \
   --name sqlite-mcp \
   -v /path/to/database:/data \
   -e SQLITE_DB_PATH=/data/database.db \
-  sqlite-mcp-server
+  arungupta/sqlite-mcp-server
 ```
 
 3. Access the MCP server:
@@ -212,14 +212,14 @@ The Docker image runs a **standard MCP server** that implements the Model Contex
 
 ```bash
 # Build the image
-docker build -t sqlite-mcp-server .
+docker build -t arungupta/sqlite-mcp-server .
 
 # Run MCP server (stdio communication only)
 docker run -d \
   --name sqlite-mcp \
   -v /path/to/database:/data \
   -e SQLITE_DB_PATH=/data/database.db \
-  sqlite-mcp-server
+  arungupta/sqlite-mcp-server
 ```
 
 ### Using HTTP Wrapper (For Testing)
@@ -290,7 +290,7 @@ curl http://localhost:4000/health
 **Production:**
 ```bash
 # Start container for AI assistant integration
-docker run -d --name sqlite-prod -v /var/lib/sqlite:/data sqlite-mcp-server
+docker run -d --name sqlite-prod -v /var/lib/sqlite:/data arungupta/sqlite-mcp-server
 ```
 
 ## Usage
@@ -580,7 +580,7 @@ This server is designed to be compatible with the Docker MCP Catalog. The `mcp.j
 
 ### Docker Catalog Metadata
 
-- **Name**: sqlite-mcp-server
+- **Name**: arungupta/sqlite-mcp-server
 - **Version**: 1.0.0
 - **Description**: SQLite database operations via MCP
 - **Author**: Your Name
@@ -625,8 +625,8 @@ To add a new tool:
 ./docker-run.sh run
 
 # Or manually
-docker build -t sqlite-mcp-server .
-docker run -d --name sqlite-mcp -v /data/sqlite:/data -e SQLITE_DB_PATH=/data/production.db sqlite-mcp-server
+docker build -t arungupta/sqlite-mcp-server .
+docker run -d --name sqlite-mcp -v /data/sqlite:/data -e SQLITE_DB_PATH=/data/production.db arungupta/sqlite-mcp-server
 ```
 
 ## Troubleshooting

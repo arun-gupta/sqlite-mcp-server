@@ -30,12 +30,8 @@ RUN chown -R nodejs:nodejs /app && \
 # Switch to non-root user
 USER nodejs
 
-# Expose HTTP port
-EXPOSE 4000
-
 # Set environment variables
 ENV SQLITE_DB_PATH=/data/database.db
-ENV HTTP_PORT=4000
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
