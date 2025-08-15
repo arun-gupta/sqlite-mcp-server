@@ -210,26 +210,31 @@ The Docker image runs a **standard MCP server** that implements the Model Contex
 # Build the image (local development)
 docker build -t sqlite-mcp-server .
 
-# Test MCP server (supports multiple requests)
-echo '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"list_tables","arguments":{}}}' | \
-docker run --rm -i \
+# Test MCP server (persistent container)
+docker run -d --name sqlite-mcp-test \
   -v $(pwd)/data:/data \
   -e SQLITE_DB_PATH=/data/database.db \
   sqlite-mcp-server
 
-# Or use the pre-built image directly
+# Send requests to the running container
 echo '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"list_tables","arguments":{}}}' | \
-docker run --rm -i \
+docker exec -i sqlite-mcp-test node src/server.js
+
+# Or use the pre-built image
+docker run -d --name sqlite-mcp-test \
   -v $(pwd)/data:/data \
   -e SQLITE_DB_PATH=/data/database.db \
   arungupta/sqlite-mcp-server
+
+echo '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"list_tables","arguments":{}}}' | \
+docker exec -i sqlite-mcp-test node src/server.js
 ```
 
 **Note:** 
 - MCP server supports multiple sequential requests in a single session
-- Server runs on-demand and handles stdio communication
-- For persistent HTTP access, use the HTTP wrapper: `./docker-run.sh run-http`
+- For testing, use persistent containers with `docker exec`
 - For production use with AI assistants, the MCP client manages container lifecycle
+- For persistent HTTP access, use the HTTP wrapper: `./docker-run.sh run-http`
 
 ## Testing
 
@@ -279,8 +284,12 @@ curl -X POST http://localhost:4000/query \
 The Docker container implements the Model Context Protocol for integration with AI assistants and MCP clients:
 
 ```bash
-# Test MCP protocol directly
+# Test MCP protocol directly (one-shot)
 echo '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"list_tables","arguments":{}}}' | docker run --rm -i -v $(pwd)/data:/data -e SQLITE_DB_PATH=/data/database.db sqlite-mcp-server
+
+# Or test with persistent container
+docker run -d --name sqlite-mcp-test -v $(pwd)/data:/data -e SQLITE_DB_PATH=/data/database.db sqlite-mcp-server
+echo '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"list_tables","arguments":{}}}' | docker exec -i sqlite-mcp-test node src/server.js
 ```
 
 ### Configuration Options
