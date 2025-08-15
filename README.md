@@ -291,7 +291,7 @@ echo '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"list_table
 ### Configuration Options
 
 **Environment Variables:**
-- `SQLITE_DB_PATH` - Path to SQLite database file (default: `/data/database.db`)
+- `SQLITE_DB_PATH` - Path to SQLite database file (default: `/data/database.db` for Docker, `:memory:` for local)
 
 **Volume Mounts:**
 - `/data` - Database storage directory
@@ -299,6 +299,17 @@ echo '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"list_table
 
 **Port Mapping:**
 - No port mapping needed - MCP communication is via stdio
+
+**Database Setup:**
+The server automatically connects to the specified database. If the database doesn't exist, it will be created. For testing, you can use an in-memory database:
+
+```bash
+# Local testing with in-memory database
+export SQLITE_DB_PATH=:memory:
+
+# Docker with persistent database
+docker run -v /path/to/database:/data -e SQLITE_DB_PATH=/data/database.db ...
+```
 
 ### Example Workflows
 
@@ -420,19 +431,7 @@ npm test
 
 This will start the server and send a series of test messages to verify all tools are working correctly.
 
-## Configuration
 
-### Environment Variables
-
-- `SQLITE_DB_PATH`: Path to the SQLite database file (default: `:memory:` for in-memory database)
-
-### Database Setup
-
-The server will automatically connect to the specified database. If the database doesn't exist, it will be created. For testing, you can use an in-memory database by setting:
-
-```bash
-export SQLITE_DB_PATH=:memory:
-```
 
 ## Security Considerations
 
