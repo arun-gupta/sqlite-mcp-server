@@ -201,38 +201,7 @@ npm run docker:stop
 npm run docker:clean
 ```
 
-#### Manual Docker Commands
 
-1. Build the Docker image (local development):
-```bash
-docker build -t sqlite-mcp-server .
-```
-
-2. Run the container (MCP server only):
-```bash
-docker run -d \
-  --name sqlite-mcp \
-  -v /path/to/database:/data \
-  -e SQLITE_DB_PATH=/data/database.db \
-  sqlite-mcp-server
-```
-
-**Or use the pre-built image directly:**
-```bash
-docker run -d \
-  --name sqlite-mcp \
-  -v /path/to/database:/data \
-  -e SQLITE_DB_PATH=/data/database.db \
-  arungupta/sqlite-mcp-server
-```
-
-3. Access the MCP server:
-```bash
-# Test MCP protocol
-echo '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"list_tables","arguments":{}}}' | docker exec -i sqlite-mcp node src/server.js
-```
-
-**Note:** The Docker container runs the standard MCP server for AI assistant integration. For HTTP testing, use the HTTP wrapper locally or the Docker scripts with `run-http` mode.
 
 ## Docker Usage
 
@@ -257,7 +226,9 @@ docker run -d \
   -v /path/to/database:/data \
   -e SQLITE_DB_PATH=/data/database.db \
   arungupta/sqlite-mcp-server
-```
+
+# Test the MCP server
+echo '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"list_tables","arguments":{}}}' | docker exec -i sqlite-mcp node src/server.js
 
 ### Using HTTP Wrapper (For Testing)
 
@@ -658,15 +629,11 @@ To add a new tool:
 ### Building for Production
 
 ```bash
-# Build and run with Docker scripts
+# Build and run with Docker scripts (recommended)
 ./docker-run.sh build
 ./docker-run.sh run
 
-# Or manually (local development)
-docker build -t sqlite-mcp-server .
-docker run -d --name sqlite-mcp -v /data/sqlite:/data -e SQLITE_DB_PATH=/data/production.db sqlite-mcp-server
-
-# Or use pre-built image
+# Or use pre-built image directly
 docker run -d --name sqlite-mcp -v /data/sqlite:/data -e SQLITE_DB_PATH=/data/production.db arungupta/sqlite-mcp-server
 ```
 
