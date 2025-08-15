@@ -116,12 +116,7 @@ curl -X POST http://localhost:4000/query \
   -d '{"query":"SELECT * FROM users"}'
 ```
 
-**Alternative: Use generic tool endpoint:**
-```bash
-curl -X POST http://localhost:4000/tools/list_tables \
-  -H "Content-Type: application/json" \
-  -d '{"arguments":{}}'
-```
+
 
 #### Test HTTP Wrapper (Postman)
 Import the provided Postman collection from `examples/postman-collection.json` for a complete set of pre-configured requests.
