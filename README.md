@@ -229,6 +229,7 @@ docker run -d \
 
 # Test the MCP server
 echo '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"list_tables","arguments":{}}}' | docker exec -i sqlite-mcp node src/server.js
+```
 
 ### Using HTTP Wrapper (For Testing)
 
