@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "sqlite": {
+      "command": "node",
+      "args": ["/app/src/server.js"],
+      "env": {
+        "SQLITE_DB_PATH": "${SQLITE_DB_PATH}"
+      }
+    }
+  }
+}
