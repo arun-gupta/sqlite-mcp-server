@@ -332,94 +332,29 @@ docker run -d --name sqlite-prod -v /var/lib/sqlite:/data arungupta/sqlite-mcp-s
 
 
 
-#### Available HTTP Endpoints:
+#### Available HTTP Endpoints
 
-**Basic Operations:**
-- `GET /health` - Health check
-- `GET /info` - Server information
-- `GET /tools` - List available tools
-- `POST /tools/:toolName` - Execute specific tool
+The HTTP wrapper provides both convenience endpoints and MCP protocol endpoints. For detailed documentation, see [docs/http-wrapper.md](docs/http-wrapper.md).
 
-**Convenience Endpoints:**
-- `GET /tables` - List all tables
-- `GET /tables/:tableName` - Describe table schema
-- `POST /query` - Run SQL query
-- `POST /tables/:tableName/insert` - Insert row
-- `PUT /tables/:tableName/update` - Update rows
-- `DELETE /tables/:tableName/delete` - Delete rows
-
-#### Postman Collection
-
-Import the provided Postman collection for easy testing:
-1. Open Postman
-2. Click "Import"
-3. Select `examples/postman-collection.json`
-4. The collection includes all endpoints with sample requests
-
-**Note:** The delete operations in the collection are designed to work with the insert operations. The workflow is:
-1. Run "Insert Row" to add a test user with email "test-delete@example.com"
-2. Run "Delete Row" to delete that same user using the email as the condition
-This ensures the delete operation will always work with fresh data.
-
-#### Understanding the Dual-Layer Architecture
-
-The Postman collection demonstrates two ways to access the same functionality:
-
-**1. Convenience Endpoints (REST-like):**
-- `GET /tables` → Lists all tables
-- `POST /query` → Runs SQL query
-- `POST /tables/:tableName/insert` → Inserts row
-
-**2. Execute Tool Endpoints (MCP Protocol):**
-- `POST /tools/call` with `{"name": "list_tables", "arguments": {}}`
-- `POST /tools/call` with `{"name": "run_query", "arguments": {"query": "SELECT * FROM users"}}`
-- `POST /tools/call` with `{"name": "insert_row", "arguments": {...}}`
-
-**Purpose of Execute Tool Queries:**
-
-**Educational Value:**
-- Shows how MCP tools are invoked under the hood
-- Demonstrates the JSON-RPC format used by MCP
-- Helps understand the protocol translation layer
-
-**For AI Assistant Integration:**
-- Shows the exact format AI assistants would use
-- Demonstrates the generic tool calling mechanism
-- Provides examples for MCP client development
-
-**Flexibility:**
-- **Convenience Endpoints:** Easy to use for common operations, REST-like, familiar to developers
-- **Execute Tool Endpoints:** Generic - can call any MCP tool, future-proof, protocol-compliant, AI-ready
-
-**Example:**
+**Quick Examples:**
 ```bash
-# Convenience endpoint (easy)
-curl -X GET http://localhost:4000/tables
+# List tables (convenience endpoint)
+curl http://localhost:4000/tables
 
-# Execute Tool endpoint (MCP format)
+# Run query (convenience endpoint)
+curl -X POST http://localhost:4000/query \
+  -H "Content-Type: application/json" \
+  -d '{"query": "SELECT * FROM users"}'
+
+# Execute tool (MCP protocol)
 curl -X POST http://localhost:4000/tools/call \
   -H "Content-Type: application/json" \
   -d '{"name": "list_tables", "arguments": {}}'
 ```
 
-Both achieve the same result, but the second shows the underlying MCP protocol format that AI assistants would use.
+#### Postman Collection
 
-#### Example HTTP Requests:
-
-```bash
-# List tables
-curl http://localhost:4000/tables
-
-# Run a query
-curl -X POST http://localhost:4000/query \
-  -H "Content-Type: application/json" \
-  -d '{"query": "SELECT * FROM users WHERE active = 1"}'
-
-# Insert a user
-curl -X POST http://localhost:4000/tables/users/insert \
-  -H "Content-Type: application/json" \
-  -d '{"data": {"name": "Test User", "email": "test@example.com"}}'
-```
+Import `examples/postman-collection.json` for comprehensive testing. See [docs/http-wrapper.md](docs/http-wrapper.md) for detailed usage instructions.
 
 ### Full Test Suite
 
