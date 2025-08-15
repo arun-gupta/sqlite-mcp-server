@@ -62,13 +62,13 @@ Once the servers are running, you can quickly test both interfaces:
 #### Test MCP Server (stdio)
 ```bash
 # List all tables
-echo '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"list_tables","arguments":{}}}' | node src/server.js
+echo '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"list_tables","arguments":{}}}' | SQLITE_DB_PATH=./test.db node src/server.js
 
 # Get user table schema
-echo '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"describe_table","arguments":{"table_name":"users"}}}' | node src/server.js
+echo '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"describe_table","arguments":{"table_name":"users"}}}' | SQLITE_DB_PATH=./test.db node src/server.js
 
 # Query all users
-echo '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"run_query","arguments":{"query":"SELECT * FROM users"}}}' | node src/server.js
+echo '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"run_query","arguments":{"query":"SELECT * FROM users"}}}' | SQLITE_DB_PATH=./test.db node src/server.js
 ```
 
 #### Test HTTP Wrapper (curl)
