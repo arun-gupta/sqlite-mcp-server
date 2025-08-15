@@ -41,6 +41,34 @@ echo "✅ Sample database created at test.db"
 export SQLITE_DB_PATH=test.db
 export HTTP_PORT=${HTTP_PORT:-4000}
 
+# Function to check and kill processes on a port
+check_and_kill_port() {
+    local port=$1
+    local pid=""
+    
+    # Try different methods to find processes on the port
+    if command -v lsof &> /dev/null; then
+        pid=$(lsof -ti:$port 2>/dev/null || echo "")
+    elif command -v netstat &> /dev/null; then
+        pid=$(netstat -tulpn 2>/dev/null | grep ":$port " | awk '{print $7}' | cut -d'/' -f1 | head -1 || echo "")
+    elif command -v ss &> /dev/null; then
+        pid=$(ss -tulpn 2>/dev/null | grep ":$port " | awk '{print $7}' | cut -d'/' -f1 | head -1 || echo "")
+    fi
+    
+    if [ -n "$pid" ] && [ "$pid" != "-" ]; then
+        echo "⚠️  Port $port is already in use by PID $pid. Killing process..."
+        kill -9 $pid 2>/dev/null || true
+        sleep 2
+        echo "✅ Port $port is now available"
+    else
+        echo "✅ Port $port is available"
+    fi
+}
+
+# Check if port is already in use and kill existing processes
+echo "🔍 Checking if port $HTTP_PORT is available..."
+check_and_kill_port $HTTP_PORT
+
 echo ""
 echo "🎯 Starting MCP and HTTP Servers..."
 echo "================================"
