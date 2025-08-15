@@ -4,6 +4,7 @@ A Model Context Protocol (MCP) server that provides SQLite database operations t
 
 ## Features
 
+- **Dual Interface**: HTTP API for testing + MCP protocol for AI assistants
 - **List Tables**: Discover all tables in the database
 - **Describe Schema**: Get detailed information about table structure
 - **Run Queries**: Execute SELECT queries with security validation
@@ -12,6 +13,7 @@ A Model Context Protocol (MCP) server that provides SQLite database operations t
 - **Delete Data**: Remove rows based on conditions
 - **Comprehensive Logging**: Debug incoming requests and outgoing responses
 - **Docker Ready**: Containerized for easy deployment
+- **Postman Collection**: Ready-to-use API testing collection
 
 ## Prerequisites
 
@@ -105,9 +107,149 @@ curl -X POST http://localhost:4000/query \
 
 **Note:** The Docker container runs the HTTP wrapper by default, which provides both HTTP API access and MCP protocol support.
 
+## Docker Usage
+
+The Docker image supports both MCP protocol communication and HTTP API access, giving you flexibility in how you interact with the SQLite database.
+
+### Running the Container
+
+```bash
+# Build the image
+docker build -t sqlite-mcp-server .
+
+# Run with HTTP API access
+docker run -d \
+  --name sqlite-mcp \
+  -p 4000:4000 \
+  -v /path/to/database:/data \
+  -e SQLITE_DB_PATH=/data/database.db \
+  -e HTTP_PORT=4000 \
+  sqlite-mcp-server
+```
+
+### Using HTTP API (Recommended for Testing)
+
+The container exposes an HTTP API on port 4000 that you can use with standard HTTP clients:
+
+```bash
+# Health check
+curl http://localhost:4000/health
+
+# List all tables
+curl http://localhost:4000/tables
+
+# Run a SQL query
+curl -X POST http://localhost:4000/query \
+  -H "Content-Type: application/json" \
+  -d '{"query": "SELECT * FROM users"}'
+
+# Insert a new user
+curl -X POST http://localhost:4000/tables/users/insert \
+  -H "Content-Type: application/json" \
+  -d '{"data": {"name": "John Doe", "email": "john@example.com"}}'
+
+# Update a user
+curl -X PUT http://localhost:4000/tables/users/update \
+  -H "Content-Type: application/json" \
+  -d '{"data": {"email": "john.updated@example.com"}, "where": {"id": 1}}'
+
+# Delete a user
+curl -X DELETE http://localhost:4000/tables/users/delete \
+  -H "Content-Type: application/json" \
+  -d '{"where": {"email": "john@example.com"}}'
+```
+
+### Using MCP Protocol (For AI Assistants)
+
+The container also supports the Model Context Protocol for integration with AI assistants and MCP clients:
+
+```bash
+# Run container for MCP protocol (no port exposure needed)
+docker run -d \
+  --name sqlite-mcp-mcp \
+  -v /path/to/database:/data \
+  -e SQLITE_DB_PATH=/data/database.db \
+  sqlite-mcp-server
+
+# The container communicates via stdio for MCP protocol
+# Use with MCP clients that support stdio transport
+```
+
+### Configuration Options
+
+**Environment Variables:**
+- `SQLITE_DB_PATH` - Path to SQLite database file (default: `/data/database.db`)
+- `HTTP_PORT` - HTTP server port (default: `4000`)
+
+**Volume Mounts:**
+- `/data` - Database storage directory
+- Mount your database file: `-v /host/path/database.db:/data/database.db`
+
+**Port Mapping:**
+- `4000:4000` - HTTP API access
+- Omit port mapping for MCP-only usage
+
+### Example Workflows
+
+**Development with HTTP API:**
+```bash
+# Start container
+docker run -d --name sqlite-dev -p 4000:4000 -v $(pwd)/data:/data sqlite-mcp-server
+
+# Use Postman collection
+# Import examples/postman-collection.json and test all endpoints
+
+# Use curl for quick tests
+curl http://localhost:4000/health
+curl http://localhost:4000/tables
+```
+
+**Production with MCP Protocol:**
+```bash
+# Start container for AI assistant integration
+docker run -d --name sqlite-prod -v /var/lib/sqlite:/data sqlite-mcp-server
+
+# Configure MCP client to use this container
+# The container communicates via stdio for MCP protocol
+```
+
+**Hybrid Usage:**
+```bash
+# Start container with both HTTP and MCP support
+docker run -d --name sqlite-hybrid -p 4000:4000 -v /data:/data sqlite-mcp-server
+
+# Use HTTP API for monitoring and testing
+curl http://localhost:4000/health
+
+# Use MCP protocol for AI assistant integration
+# Container supports both simultaneously
+```
+
 ## Usage
 
-### MCP Client Integration
+The SQLite MCP Server provides two ways to interact with your database:
+
+### 1. HTTP API (Recommended for Testing)
+
+Use standard HTTP requests for easy testing and integration:
+
+```bash
+# Start the HTTP wrapper
+npm run http
+
+# Or use the quickstart script
+./quickstart.sh
+```
+
+**Available HTTP endpoints:**
+- `GET /health` - Health check
+- `GET /tables` - List all tables
+- `POST /query` - Run SQL query
+- `POST /tables/:tableName/insert` - Insert row
+- `PUT /tables/:tableName/update` - Update rows
+- `DELETE /tables/:tableName/delete` - Delete rows
+
+### 2. MCP Protocol (For AI Assistants)
 
 The server implements the Model Context Protocol and can be integrated with any MCP-compatible client. The server communicates via stdio and supports the following tools:
 
