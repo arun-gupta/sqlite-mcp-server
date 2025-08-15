@@ -404,6 +404,49 @@ Import the provided Postman collection for easy testing:
 2. Run "Delete Row" to delete that same user using the email as the condition
 This ensures the delete operation will always work with fresh data.
 
+#### Understanding the Dual-Layer Architecture
+
+The Postman collection demonstrates two ways to access the same functionality:
+
+**1. Convenience Endpoints (REST-like):**
+- `GET /tables` → Lists all tables
+- `POST /query` → Runs SQL query
+- `POST /tables/:tableName/insert` → Inserts row
+
+**2. Execute Tool Endpoints (MCP Protocol):**
+- `POST /tools/call` with `{"name": "list_tables", "arguments": {}}`
+- `POST /tools/call` with `{"name": "run_query", "arguments": {"query": "SELECT * FROM users"}}`
+- `POST /tools/call` with `{"name": "insert_row", "arguments": {...}}`
+
+**Purpose of Execute Tool Queries:**
+
+**Educational Value:**
+- Shows how MCP tools are invoked under the hood
+- Demonstrates the JSON-RPC format used by MCP
+- Helps understand the protocol translation layer
+
+**For AI Assistant Integration:**
+- Shows the exact format AI assistants would use
+- Demonstrates the generic tool calling mechanism
+- Provides examples for MCP client development
+
+**Flexibility:**
+- **Convenience Endpoints:** Easy to use for common operations, REST-like, familiar to developers
+- **Execute Tool Endpoints:** Generic - can call any MCP tool, future-proof, protocol-compliant, AI-ready
+
+**Example:**
+```bash
+# Convenience endpoint (easy)
+curl -X GET http://localhost:4000/tables
+
+# Execute Tool endpoint (MCP format)
+curl -X POST http://localhost:4000/tools/call \
+  -H "Content-Type: application/json" \
+  -d '{"name": "list_tables", "arguments": {}}'
+```
+
+Both achieve the same result, but the second shows the underlying MCP protocol format that AI assistants would use.
+
 #### Example HTTP Requests:
 
 ```bash
