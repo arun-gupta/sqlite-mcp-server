@@ -18,6 +18,30 @@ A Model Context Protocol (MCP) server that provides SQLite database operations t
 - Node.js 18 or higher
 - SQLite 3 (included in Docker image)
 
+## Quick Start
+
+Get up and running in seconds with our quickstart script:
+
+```bash
+# Clone the repository
+git clone <repository-url>
+cd sqlite-mcp-server
+
+# Run the quickstart script
+./quickstart.sh
+```
+
+This script will:
+- ✅ Check Node.js version (requires 18+)
+- ✅ Install dependencies automatically
+- ✅ Create a sample database with test data
+- ✅ Start the MCP server ready for use
+
+The server will be running with a sample database containing:
+- 3 users (John Doe, Jane Smith, Bob Johnson)
+- 3 categories (Technology, Travel, Food)
+- 4 sample posts with relationships
+
 ## Installation
 
 ### Local Development
@@ -144,7 +168,21 @@ The server implements the Model Context Protocol and can be integrated with any 
 
 ## Testing
 
-Run the test suite to verify the server functionality:
+### Quick Test
+
+After running the quickstart script, you can test the server with a simple command:
+
+```bash
+# Test listing tables
+echo '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"list_tables","arguments":{}}}' | node src/server.js
+
+# Test querying users
+echo '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"run_query","arguments":{"query":"SELECT * FROM users WHERE active = 1"}}}' | node src/server.js
+```
+
+### Full Test Suite
+
+Run the complete test suite to verify all functionality:
 
 ```bash
 npm test
