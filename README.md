@@ -148,61 +148,33 @@ npm run http
 ./quickstart.sh
 ```
 
-### Docker Deployment
-
-#### Using Docker Scripts (Recommended)
-
-We provide convenient scripts for Docker management:
-
-```bash
-# Build the image
-./docker-run.sh build
-
-# Run MCP server (stdio only)
-./docker-run.sh run
-
-# Run with HTTP wrapper on port 4000
-./docker-run.sh run-http
-
-# Run with HTTP wrapper on custom port
-./docker-run.sh run-custom 8080
-
-# Stop containers
-./docker-run.sh stop
-
-# View logs
-./docker-run.sh logs
-
-# Check status
-./docker-run.sh status
-```
-
-#### Using npm Scripts
-
-```bash
-# Build the image
-npm run docker:build
-
-# Run MCP server
-npm run docker:run
-
-# Run with HTTP wrapper
-npm run docker:run-http
-
-# Stop containers
-npm run docker:stop
-
-# Clean containers
-npm run docker:clean
-```
-
-
-
-## Docker Usage
+## Docker
 
 The Docker image runs a **standard MCP server** that implements the Model Context Protocol for AI assistant integration and Docker MCP Catalog compatibility.
 
-### Running the Container
+### Quick Start
+
+**Using Docker Scripts (Recommended):**
+```bash
+# Build and test MCP server
+./docker-run.sh build
+./docker-run.sh run
+
+# Or run with HTTP wrapper for testing
+./docker-run.sh run-http
+```
+
+**Using npm Scripts:**
+```bash
+# Build and test MCP server
+npm run docker:build
+npm run docker:run
+
+# Or run with HTTP wrapper for testing
+npm run docker:run-http
+```
+
+### Manual Docker Commands
 
 **Important:** MCP servers are designed to run on-demand, not as persistent daemons. Each request starts a new container instance.
 
