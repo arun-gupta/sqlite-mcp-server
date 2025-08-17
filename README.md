@@ -202,6 +202,32 @@ docker run --rm -i \
 - For production use with AI assistants, the MCP client manages container lifecycle
 - For persistent HTTP access, use the HTTP wrapper: `./docker-run.sh run-http`
 
+### Publishing to Docker Hub
+
+To create and publish the `arungupta/sqlite-mcp-server` image:
+
+```bash
+# Build with the correct tag
+docker build -t arungupta/sqlite-mcp-server:latest .
+
+# Test the image locally
+echo '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"list_tables","arguments":{}}}' | \
+docker run --rm -i \
+  -v $(pwd)/data:/data \
+  -e SQLITE_DB_PATH=/data/database.db \
+  arungupta/sqlite-mcp-server:latest
+
+# Login to Docker Hub (if not already logged in)
+docker login
+
+# Push to Docker Hub
+docker push arungupta/sqlite-mcp-server:latest
+
+# Tag with version (optional)
+docker tag arungupta/sqlite-mcp-server:latest arungupta/sqlite-mcp-server:1.0.0
+docker push arungupta/sqlite-mcp-server:1.0.0
+```
+
 
 
 
