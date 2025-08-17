@@ -72,8 +72,7 @@ docker run -d \
   -e SQLITE_DB_PATH=/data/database.db \
   arungupta/sqlite-mcp-server
 
-# Test it
-echo '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"list_tables","arguments":{}}}' | docker exec -i sqlite-mcp node src/server.js
+
 ```
 
 ### Quick Testing
