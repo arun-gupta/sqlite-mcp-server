@@ -206,6 +206,8 @@ docker run --rm -i \
 
 To create and publish the `arungupta/sqlite-mcp-server` image:
 
+**Note:** Replace `arungupta` with your Docker Hub username if you want to publish to your own repository.
+
 ```bash
 # Build with the correct tag
 docker build -t arungupta/sqlite-mcp-server:latest .
