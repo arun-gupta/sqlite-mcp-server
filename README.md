@@ -175,13 +175,13 @@ npm run docker:run-http
 
 ### Manual Docker Commands
 
-**Important:** MCP servers are designed to run on-demand, not as persistent daemons. Each request starts a new container instance.
+**Important:** The MCP server supports both one-shot and persistent modes for different use cases.
 
 ```bash
 # Build the image (local development)
 docker build -t sqlite-mcp-server .
 
-# Test MCP server (one-shot approach)
+# Test MCP server (one-shot for single requests)
 echo '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"list_tables","arguments":{}}}' | \
 docker run --rm -i \
   -v $(pwd)/data:/data \
@@ -197,8 +197,8 @@ docker run --rm -i \
 ```
 
 **Note:** 
-- MCP servers are designed to run on-demand (one-shot approach)
-- Each request starts a new container instance
+- One-shot mode: Each request starts a new container instance (good for testing)
+- Persistent mode: Server stays running and handles multiple sequential requests
 - For production use with AI assistants, the MCP client manages container lifecycle
 - For persistent HTTP access, use the HTTP wrapper: `./docker-run.sh run-http`
 
