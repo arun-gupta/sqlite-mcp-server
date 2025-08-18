@@ -148,6 +148,12 @@ jobs:
     - name: Build TypeScript
       run: npm run build
 
+    - name: Generate timestamped version
+      run: |
+        TIMESTAMP=$(date +%s)
+        npm version --no-git-tag-version $TIMESTAMP.0.0
+        echo "Published version: $TIMESTAMP.0.0"
+
     - name: Publish to GitHub npm registry
       run: npm publish
       env:
