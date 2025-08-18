@@ -77,7 +77,7 @@ docker run -d \
   -e SQLITE_DB_PATH=/data/database.db \
   -e SERVER_MODE=http \
   -e HTTP_PORT=4000 \
-  arungupta/sqlite-mcp-server
+  arungupta/sqlite-mcp-server:latest
 
 # Test HTTP endpoints (curl)
 curl http://localhost:4000/health
@@ -101,7 +101,7 @@ docker run -d \
   --name sqlite-mcp \
   -v $(pwd)/data:/data \
   -e SQLITE_DB_PATH=/data/database.db \
-  arungupta/sqlite-mcp-server
+  arungupta/sqlite-mcp-server:latest
 
 # Test MCP server (stdio)
 echo '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"list_tables","arguments":{}}}' | docker exec -i sqlite-mcp node dist/server.js
