@@ -64,15 +64,32 @@ If you want to try it immediately without building:
 ```bash
 # Create data directory
 mkdir -p data
+```
 
-# Run in MCP mode (default)
+#### MCP Mode (Default) - For MCP Client Integration
+
+```bash
+# Run in MCP mode (persistent, for MCP clients)
 docker run -d \
   --name sqlite-mcp \
   -v $(pwd)/data:/data \
   -e SQLITE_DB_PATH=/data/database.db \
   arungupta/sqlite-mcp-server
 
-# Or run in HTTP mode (for API testing)
+# Test MCP server (stdio)
+echo '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"list_tables","arguments":{}}}' | docker exec -i sqlite-mcp node dist/server.js
+
+# Get user table schema
+echo '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"describe_table","arguments":{"table_name":"users"}}}' | docker exec -i sqlite-mcp node dist/server.js
+
+# Query all users
+echo '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"run_query","arguments":{"query":"SELECT * FROM users"}}}' | docker exec -i sqlite-mcp node dist/server.js
+```
+
+#### HTTP Mode - For API Testing (Postman, curl)
+
+```bash
+# Run in HTTP mode (for API testing)
 docker run -d \
   --name sqlite-mcp-http \
   -p 4000:4000 \
@@ -81,43 +98,11 @@ docker run -d \
   -e SERVER_MODE=http \
   -e HTTP_PORT=4000 \
   arungupta/sqlite-mcp-server
-```
 
-### Quick Testing
-
-Once the servers are running, you can quickly test both interfaces:
-
-#### Test MCP Server (stdio)
-
-**List all tables:**
-```bash
-echo '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"list_tables","arguments":{}}}' | SQLITE_DB_PATH=test.db node src/server.js
-```
-
-**Get user table schema:**
-```bash
-echo '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"describe_table","arguments":{"table_name":"users"}}}' | SQLITE_DB_PATH=test.db node src/server.js
-```
-
-**Query all users:**
-```bash
-echo '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"run_query","arguments":{"query":"SELECT * FROM users"}}}' | SQLITE_DB_PATH=test.db node src/server.js
-```
-
-#### Test HTTP Wrapper (curl)
-
-**List all tables:**
-```bash
+# Test HTTP endpoints (curl)
+curl http://localhost:4000/health
 curl http://localhost:4000/tables
-```
-
-**Get user table schema:**
-```bash
 curl http://localhost:4000/tables/users
-```
-
-**Query all users:**
-```bash
 curl -X POST http://localhost:4000/query \
   -H "Content-Type: application/json" \
   -d '{"query":"SELECT * FROM users"}'
@@ -204,13 +189,14 @@ docker run -d \
   -e SERVER_MODE=mcp \
   sqlite-mcp-server
 
-# Or use the pre-built image
-docker run -d \
-  --name sqlite-mcp \
-  -v $(pwd)/data:/data \
-  -e SQLITE_DB_PATH=/data/database.db \
-  -e SERVER_MODE=mcp \
-  arungupta/sqlite-mcp-server
+# Test MCP server (stdio)
+echo '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"list_tables","arguments":{}}}' | docker exec -i sqlite-mcp node dist/server.js
+
+# Get user table schema
+echo '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"describe_table","arguments":{"table_name":"users"}}}' | docker exec -i sqlite-mcp node dist/server.js
+
+# Query all users
+echo '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"run_query","arguments":{"query":"SELECT * FROM users"}}}' | docker exec -i sqlite-mcp node dist/server.js
 ```
 
 **MCP Mode Features:**
@@ -232,15 +218,13 @@ docker run -d \
   -e HTTP_PORT=4000 \
   sqlite-mcp-server
 
-# Or use the pre-built image
-docker run -d \
-  --name sqlite-mcp-http \
-  -p 4000:4000 \
-  -v $(pwd)/data:/data \
-  -e SQLITE_DB_PATH=/data/database.db \
-  -e SERVER_MODE=http \
-  -e HTTP_PORT=4000 \
-  arungupta/sqlite-mcp-server
+# Test HTTP endpoints (curl)
+curl http://localhost:4000/health
+curl http://localhost:4000/tables
+curl http://localhost:4000/tables/users
+curl -X POST http://localhost:4000/query \
+  -H "Content-Type: application/json" \
+  -d '{"query":"SELECT * FROM users"}'
 ```
 
 **HTTP Mode Features:**
