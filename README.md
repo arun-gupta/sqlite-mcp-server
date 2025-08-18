@@ -162,6 +162,38 @@ npm run http
 ./quickstart.sh
 ```
 
+## CI/CD Pipeline
+
+This project uses GitHub Actions for automated building, testing, and publishing:
+
+### 🚀 **Automated Workflow**
+
+Every push to the `main` branch triggers:
+
+1. **✅ Build & Test**:
+   - TypeScript compilation and type checking
+   - Docker image building
+   - HTTP mode testing (health endpoints)
+   - MCP mode testing (stdio communication)
+
+2. **✅ Publish Docker Images**:
+   - **Docker Hub**: `arungupta/sqlite-mcp-server:latest`
+   - **GitHub Container Registry**: `ghcr.io/arun-gupta/sqlite-mcp-server:latest`
+
+3. **✅ Publish npm Package**:
+   - **GitHub npm registry**: `@arun-gupta/sqlite-mcp-server@{timestamp}.0.0`
+
+### 📋 **Workflow Status**
+
+[![Docker Image CI](https://github.com/arun-gupta/sqlite-mcp-server/workflows/Docker%20Image%20CI/badge.svg)](https://github.com/arun-gupta/sqlite-mcp-server/actions)
+
+### 🔧 **Manual Trigger**
+
+You can manually trigger the workflow:
+1. Go to [Actions](https://github.com/arun-gupta/sqlite-mcp-server/actions)
+2. Select "Docker Image CI"
+3. Click "Run workflow"
+
 ## Docker
 
 The Docker image supports two modes:
