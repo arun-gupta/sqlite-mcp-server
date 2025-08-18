@@ -170,71 +170,14 @@ npm run docker:run
 npm run docker:run-http
 ```
 
-### Manual Docker Commands
+### Docker Modes
 
-The Docker image supports two modes: **HTTP mode** (recommended) and **MCP mode** (direct). The HTTP mode actually includes both interfaces!
+The Docker image supports two modes:
 
-#### HTTP Mode (Recommended) - Both HTTP API and MCP Server
+- **HTTP Mode** (recommended): Includes both HTTP API and MCP server
+- **MCP Mode**: Direct MCP server only (no HTTP overhead)
 
-```bash
-# Build the image (local development)
-docker build -t sqlite-mcp-server .
-
-# Run in HTTP mode (includes both HTTP API and MCP server)
-docker run -d \
-  --name sqlite-mcp-http \
-  -p 4000:4000 \
-  -v $(pwd)/data:/data \
-  -e SQLITE_DB_PATH=/data/database.db \
-  -e SERVER_MODE=http \
-  -e HTTP_PORT=4000 \
-  sqlite-mcp-server
-
-# Test HTTP endpoints (curl)
-curl http://localhost:4000/health
-curl http://localhost:4000/tables
-curl http://localhost:4000/tables/users
-curl -X POST http://localhost:4000/query \
-  -H "Content-Type: application/json" \
-  -d '{"query":"SELECT * FROM users"}'
-
-# Test MCP server directly (stdio) - same container!
-echo '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"list_tables","arguments":{}}}' | docker exec -i sqlite-mcp-http node dist/server.js
-echo '{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"describe_table","arguments":{"table_name":"users"}}}' | docker exec -i sqlite-mcp-http node dist/server.js
-echo '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"run_query","arguments":{"query":"SELECT * FROM users"}}}' | docker exec -i sqlite-mcp-http node dist/server.js
-```
-
-**HTTP Mode Features:**
-- ✅ HTTP API accessible on port 4000
-- ✅ RESTful endpoints for database operations
-- ✅ Perfect for Postman testing
-- ✅ Health check endpoint: `GET /health`
-- ✅ **MCP server included** - can test both interfaces from same container!
-
-#### MCP Mode Only - For Direct MCP Client Integration
-
-```bash
-# Run in MCP mode only (for AI assistants and MCP clients)
-docker run -d \
-  --name sqlite-mcp \
-  -v $(pwd)/data:/data \
-  -e SQLITE_DB_PATH=/data/database.db \
-  -e SERVER_MODE=mcp \
-  sqlite-mcp-server
-
-# Test MCP server (stdio)
-echo '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"list_tables","arguments":{}}}' | docker exec -i sqlite-mcp node dist/server.js
-```
-
-**MCP Mode Features:**
-- ✅ Persistent server that stays running
-- ✅ Heartbeat messages every 30 seconds
-- ✅ Designed for MCP client integration
-- ✅ Database operations via MCP protocol
-- ✅ **No HTTP overhead** - direct stdio communication only
-
-#### Quick Mode Switching
-
+**Quick Mode Switching:**
 ```bash
 # Check which mode is running
 docker ps
@@ -248,11 +191,6 @@ docker run -d --name sqlite-mcp-http -p 4000:4000 -v $(pwd)/data:/data -e SERVER
 # Switch to MCP mode
 docker run -d --name sqlite-mcp -v $(pwd)/data:/data -e SERVER_MODE=mcp sqlite-mcp-server
 ```
-
-**Note:** 
-- **MCP mode**: Use for MCP client integration and AI assistants
-- **HTTP mode**: Use for API testing, Postman, and development
-- Both modes use the same Docker image with different configurations
 
 ### Publishing to Docker Hub
 
