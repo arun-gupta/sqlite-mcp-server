@@ -66,10 +66,15 @@ If you want to try it immediately without building:
 mkdir -p data
 ```
 
+**Available Docker Images:**
+- **Docker Hub** (recommended): `arungupta/sqlite-mcp-server:latest`
+- **GitHub Container Registry**: `ghcr.io/arun-gupta/sqlite-mcp-server:latest`
+
 #### HTTP Mode (Recommended) - Both HTTP API and MCP Server
 
 ```bash
 # Run in HTTP mode (includes both HTTP API and MCP server)
+# Option 1: Docker Hub (recommended)
 docker run -d \
   --name sqlite-mcp-http \
   -p 4000:4000 \
@@ -78,6 +83,16 @@ docker run -d \
   -e SERVER_MODE=http \
   -e HTTP_PORT=4000 \
   arungupta/sqlite-mcp-server:latest
+
+# Option 2: GitHub Container Registry
+docker run -d \
+  --name sqlite-mcp-http \
+  -p 4000:4000 \
+  -v $(pwd)/data:/data \
+  -e SQLITE_DB_PATH=/data/database.db \
+  -e SERVER_MODE=http \
+  -e HTTP_PORT=4000 \
+  ghcr.io/arun-gupta/sqlite-mcp-server:latest
 
 # Test HTTP endpoints (curl)
 curl http://localhost:4000/health
@@ -97,11 +112,19 @@ echo '{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"run_query"
 
 ```bash
 # Run in MCP mode only (for AI assistants and MCP clients)
+# Option 1: Docker Hub (recommended)
 docker run -d \
   --name sqlite-mcp \
   -v $(pwd)/data:/data \
   -e SQLITE_DB_PATH=/data/database.db \
   arungupta/sqlite-mcp-server:latest
+
+# Option 2: GitHub Container Registry
+docker run -d \
+  --name sqlite-mcp \
+  -v $(pwd)/data:/data \
+  -e SQLITE_DB_PATH=/data/database.db \
+  ghcr.io/arun-gupta/sqlite-mcp-server:latest
 
 # Test MCP server (stdio)
 echo '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"list_tables","arguments":{}}}' | docker exec -i sqlite-mcp node dist/server.js
