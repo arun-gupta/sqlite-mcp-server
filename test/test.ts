@@ -1,14 +1,15 @@
 #!/usr/bin/env node
 
-import { spawn } from 'child_process';
+import { spawn, ChildProcess } from 'child_process';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
+import type { MCPRequest } from '../src/types/mcp.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // Test MCP messages
-const testMessages = [
+const testMessages: MCPRequest[] = [
   // Initialize
   {
     jsonrpc: '2.0',
@@ -44,18 +45,18 @@ const testMessages = [
   },
 ];
 
-async function testMCPServer() {
+async function testMCPServer(): Promise<void> {
   console.log('Starting MCP server test...\n');
 
-  // Start the MCP server
-  const serverProcess = spawn('node', [join(__dirname, '../src/server.js')], {
+  // Start the MCP server (use compiled JavaScript)
+  const serverProcess: ChildProcess = spawn('node', [join(__dirname, '../dist/server.js')], {
     stdio: ['pipe', 'pipe', 'pipe'],
   });
 
   let responseCount = 0;
 
   // Handle server responses
-  serverProcess.stdout.on('data', (data) => {
+  serverProcess.stdout?.on('data', (data: Buffer) => {
     const responses = data.toString().trim().split('\n');
     
     for (const response of responses) {
@@ -72,14 +73,14 @@ async function testMCPServer() {
   });
 
   // Handle server errors
-  serverProcess.stderr.on('data', (data) => {
+  serverProcess.stderr?.on('data', (data: Buffer) => {
     console.error('Server stderr:', data.toString());
   });
 
   // Send test messages
   for (const message of testMessages) {
     console.log(`Sending: ${message.method}`);
-    serverProcess.stdin.write(JSON.stringify(message) + '\n');
+    serverProcess.stdin?.write(JSON.stringify(message) + '\n');
     
     // Wait a bit between messages
     await new Promise(resolve => setTimeout(resolve, 100));

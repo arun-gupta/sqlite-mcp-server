@@ -453,7 +453,7 @@ class SQLiteMCPServer {
     await this.connectDatabase();
     
     console.error('[MCP] Server initialized and ready');
-    console.error('[MCP] This is a persistent version for testing - use the standard server.js for MCP clients');
+    console.error('[MCP] This is a persistent version for testing - use the standard server.ts for MCP clients');
     
     // Keep the server running indefinitely
     process.on('SIGINT', () => {
