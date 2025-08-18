@@ -1,7 +1,7 @@
 # SQLite MCP Server
 
 [![Docker Image CI](https://github.com/arun-gupta/sqlite-mcp-server/workflows/Docker%20Image%20CI/badge.svg)](https://github.com/arun-gupta/sqlite-mcp-server/actions)
-[![npm version](https://img.shields.io/npm/v/@arun-gupta/sqlite-mcp-server?registry_uri=https://npm.pkg.github.com)](https://github.com/arun-gupta/sqlite-mcp-server/packages)
+[![npm package](https://img.shields.io/badge/npm-%40arun--gupta%2Fsqlite--mcp--server-blue.svg)](https://github.com/arun-gupta/sqlite-mcp-server/packages)
 [![Docker Pulls](https://img.shields.io/docker/pulls/arungupta/sqlite-mcp-server)](https://hub.docker.com/r/arungupta/sqlite-mcp-server)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Node.js](https://img.shields.io/badge/node-%3E%3D18-brightgreen.svg)](https://nodejs.org/)
