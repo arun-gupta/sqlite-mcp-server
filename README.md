@@ -65,14 +65,22 @@ If you want to try it immediately without building:
 # Create data directory
 mkdir -p data
 
-# Run with pre-built image
+# Run in MCP mode (default)
 docker run -d \
   --name sqlite-mcp \
   -v $(pwd)/data:/data \
   -e SQLITE_DB_PATH=/data/database.db \
   arungupta/sqlite-mcp-server
 
-
+# Or run in HTTP mode (for API testing)
+docker run -d \
+  --name sqlite-mcp-http \
+  -p 4000:4000 \
+  -v $(pwd)/data:/data \
+  -e SQLITE_DB_PATH=/data/database.db \
+  -e SERVER_MODE=http \
+  -e HTTP_PORT=4000 \
+  arungupta/sqlite-mcp-server
 ```
 
 ### Quick Testing
@@ -149,7 +157,12 @@ npm run http
 
 ## Docker
 
-The Docker image runs a **persistent MCP server** by default that stays running for testing and development purposes. For production use with MCP clients, the server will be managed by the MCP client lifecycle.
+The Docker image supports two modes:
+
+- **MCP Mode** (default): Persistent MCP server for client integration
+- **HTTP Mode**: HTTP API server for testing and development
+
+Use the `SERVER_MODE` environment variable to switch between modes.
 
 ### Quick Start
 
@@ -175,17 +188,20 @@ npm run docker:run-http
 
 ### Manual Docker Commands
 
-**Important:** The Docker image now runs in **persistent mode by default** for better testing and development experience.
+The Docker image supports two modes: **MCP mode** (default) and **HTTP mode**. Use the `SERVER_MODE` environment variable to switch between them.
+
+#### MCP Mode (Default) - For MCP Client Integration
 
 ```bash
 # Build the image (local development)
 docker build -t sqlite-mcp-server .
 
-# Run the persistent server (stays running)
+# Run in MCP mode (persistent, for MCP clients)
 docker run -d \
   --name sqlite-mcp \
   -v $(pwd)/data:/data \
   -e SQLITE_DB_PATH=/data/database.db \
+  -e SERVER_MODE=mcp \
   sqlite-mcp-server
 
 # Or use the pre-built image
@@ -193,14 +209,66 @@ docker run -d \
   --name sqlite-mcp \
   -v $(pwd)/data:/data \
   -e SQLITE_DB_PATH=/data/database.db \
+  -e SERVER_MODE=mcp \
   arungupta/sqlite-mcp-server
 ```
 
+**MCP Mode Features:**
+- ✅ Persistent server that stays running
+- ✅ Heartbeat messages every 30 seconds
+- ✅ Designed for MCP client integration
+- ✅ Database operations via MCP protocol
+
+#### HTTP Mode - For API Testing (Postman, curl)
+
+```bash
+# Run in HTTP mode (for API testing)
+docker run -d \
+  --name sqlite-mcp-http \
+  -p 4000:4000 \
+  -v $(pwd)/data:/data \
+  -e SQLITE_DB_PATH=/data/database.db \
+  -e SERVER_MODE=http \
+  -e HTTP_PORT=4000 \
+  sqlite-mcp-server
+
+# Or use the pre-built image
+docker run -d \
+  --name sqlite-mcp-http \
+  -p 4000:4000 \
+  -v $(pwd)/data:/data \
+  -e SQLITE_DB_PATH=/data/database.db \
+  -e SERVER_MODE=http \
+  -e HTTP_PORT=4000 \
+  arungupta/sqlite-mcp-server
+```
+
+**HTTP Mode Features:**
+- ✅ HTTP API accessible on port 4000
+- ✅ RESTful endpoints for database operations
+- ✅ Perfect for Postman testing
+- ✅ Health check endpoint: `GET /health`
+
+#### Quick Mode Switching
+
+```bash
+# Check which mode is running
+docker ps
+
+# Stop current container
+docker stop sqlite-mcp sqlite-mcp-http 2>/dev/null || true
+
+# Switch to HTTP mode
+docker run -d --name sqlite-mcp-http -p 4000:4000 -v $(pwd)/data:/data -e SERVER_MODE=http -e HTTP_PORT=4000 sqlite-mcp-server
+
+# Switch to MCP mode
+docker run -d --name sqlite-mcp -v $(pwd)/data:/data -e SERVER_MODE=mcp sqlite-mcp-server
+```
+
 **Note:** 
-- **Persistent mode (default)**: Server stays running and shows heartbeat messages every 30 seconds
-- **Standard mode**: For MCP client integration, use `src/server.js` directly
-- For production use with AI assistants, the MCP client manages container lifecycle
-- For HTTP API access, use the HTTP wrapper: `./docker-run.sh run-http`
+- **MCP mode**: Use for MCP client integration and AI assistants
+- **HTTP mode**: Use for API testing, Postman, and development
+- Both modes use the same Docker image with different configurations
 
 ### Publishing to Docker Hub
 
@@ -214,16 +282,16 @@ docker build -t arungupta/sqlite-mcp-server:latest .
 
 # Test the image locally (persistent mode)
 docker run -d \
-  --name test-sqlite-mcp \
+  --name sqlite-mcp-server \
   -v $(pwd)/data:/data \
   -e SQLITE_DB_PATH=/data/database.db \
   arungupta/sqlite-mcp-server:latest
 
 # Check logs to verify it's running
-docker logs test-sqlite-mcp
+docker logs sqlite-mcp-server
 
-# Clean up test container
-docker stop test-sqlite-mcp && docker rm test-sqlite-mcp
+# Clean up container
+docker stop sqlite-mcp-server && docker rm sqlite-mcp-server
 
 # Login to Docker Hub (if not already logged in)
 docker login
