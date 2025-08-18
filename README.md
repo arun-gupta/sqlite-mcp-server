@@ -149,7 +149,7 @@ npm run http
 
 ## Docker
 
-The Docker image runs a **standard MCP server** that implements the Model Context Protocol for AI assistant integration and Docker MCP Catalog compatibility.
+The Docker image runs a **persistent MCP server** by default that stays running for testing and development purposes. For production use with MCP clients, the server will be managed by the MCP client lifecycle.
 
 ### Quick Start
 
@@ -175,32 +175,32 @@ npm run docker:run-http
 
 ### Manual Docker Commands
 
-**Important:** The MCP server supports both one-shot and persistent modes for different use cases.
+**Important:** The Docker image now runs in **persistent mode by default** for better testing and development experience.
 
 ```bash
 # Build the image (local development)
 docker build -t sqlite-mcp-server .
 
-# Test MCP server (one-shot for single requests)
-echo '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"list_tables","arguments":{}}}' | \
-docker run --rm -i \
+# Run the persistent server (stays running)
+docker run -d \
+  --name sqlite-mcp \
   -v $(pwd)/data:/data \
   -e SQLITE_DB_PATH=/data/database.db \
   sqlite-mcp-server
 
 # Or use the pre-built image
-echo '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"list_tables","arguments":{}}}' | \
-docker run --rm -i \
+docker run -d \
+  --name sqlite-mcp \
   -v $(pwd)/data:/data \
   -e SQLITE_DB_PATH=/data/database.db \
   arungupta/sqlite-mcp-server
 ```
 
 **Note:** 
-- One-shot mode: Each request starts a new container instance (good for testing)
-- Persistent mode: Server stays running and handles multiple sequential requests
+- **Persistent mode (default)**: Server stays running and shows heartbeat messages every 30 seconds
+- **Standard mode**: For MCP client integration, use `src/server.js` directly
 - For production use with AI assistants, the MCP client manages container lifecycle
-- For persistent HTTP access, use the HTTP wrapper: `./docker-run.sh run-http`
+- For HTTP API access, use the HTTP wrapper: `./docker-run.sh run-http`
 
 ### Publishing to Docker Hub
 
@@ -212,12 +212,18 @@ To create and publish the `arungupta/sqlite-mcp-server` image:
 # Build with the correct tag
 docker build -t arungupta/sqlite-mcp-server:latest .
 
-# Test the image locally
-echo '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"list_tables","arguments":{}}}' | \
-docker run --rm -i \
+# Test the image locally (persistent mode)
+docker run -d \
+  --name test-sqlite-mcp \
   -v $(pwd)/data:/data \
   -e SQLITE_DB_PATH=/data/database.db \
   arungupta/sqlite-mcp-server:latest
+
+# Check logs to verify it's running
+docker logs test-sqlite-mcp
+
+# Clean up test container
+docker stop test-sqlite-mcp && docker rm test-sqlite-mcp
 
 # Login to Docker Hub (if not already logged in)
 docker login

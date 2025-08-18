@@ -37,5 +37,5 @@ ENV SQLITE_DB_PATH=/data/database.db
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD node -e "console.log('Health check passed')" || exit 1
 
-# Start the persistent MCP server (default for Docker)
+# Start the persistent MCP server for testing
 CMD ["node", "src/server-persistent.js"]
