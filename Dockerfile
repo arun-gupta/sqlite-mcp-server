@@ -32,10 +32,11 @@ USER nodejs
 
 # Set environment variables
 ENV SQLITE_DB_PATH=/data/database.db
+ENV SERVER_MODE=mcp
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD node -e "console.log('Health check passed')" || exit 1
 
-# Start the persistent MCP server (default for Docker)
-CMD ["node", "src/server-persistent.js"]
+# Start server based on mode
+CMD ["sh", "-c", "if [ \"$SERVER_MODE\" = \"http\" ]; then node src/http-wrapper.js; else node src/server-persistent.js; fi"]
