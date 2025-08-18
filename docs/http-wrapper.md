@@ -4,6 +4,8 @@
 
 The SQLite MCP Server includes an optional HTTP wrapper that provides REST-like access to MCP tools. This allows for easy testing and integration with standard HTTP clients while maintaining the underlying MCP protocol structure.
 
+**Note:** This project has been fully converted to TypeScript for better type safety and developer experience. The HTTP wrapper internally spawns the MCP server as a child process, providing both HTTP API and MCP server functionality from a single container.
+
 ## Available HTTP Endpoints
 
 ### Basic Operations
@@ -119,6 +121,21 @@ The delete operations in the collection are designed to work with the insert ope
 
 This ensures the delete operation will always work with fresh data.
 
+## TypeScript Build Process
+
+The project uses TypeScript for type safety. The build process compiles TypeScript to JavaScript:
+
+```bash
+# Build TypeScript to JavaScript
+npm run build
+
+# Type checking without compilation
+npm run type-check
+
+# Development with auto-reload
+npm run dev:http
+```
+
 ## Running the HTTP Wrapper
 
 ### Local Development
@@ -128,20 +145,31 @@ npm run http
 
 # Start with custom port
 HTTP_PORT=8080 npm run http
+
+# Development mode with auto-reload
+npm run dev:http
 ```
 
 ### Docker
 ```bash
-# Run with HTTP wrapper on port 4000
-./docker-run.sh run-http
+# Run with HTTP wrapper (includes both HTTP API and MCP server)
+docker run -d \
+  --name sqlite-mcp-http \
+  -p 4000:4000 \
+  -v $(pwd)/data:/data \
+  -e SQLITE_DB_PATH=/data/database.db \
+  -e SERVER_MODE=http \
+  -e HTTP_PORT=4000 \
+  arungupta/sqlite-mcp-server
 
-# Run with HTTP wrapper on custom port
-./docker-run.sh run-custom 8080
+# Test HTTP endpoints
+curl http://localhost:4000/health
+curl http://localhost:4000/tables
 ```
 
 ### Quickstart (Both MCP and HTTP)
 ```bash
-# Start both MCP and HTTP servers
+# Start both MCP and HTTP servers with sample database
 ./quickstart.sh
 ```
 
