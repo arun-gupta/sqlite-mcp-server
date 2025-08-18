@@ -1,9 +1,23 @@
 {
-  "name": "sqlite-mcp-server",
+  "name": "@arun-gupta/sqlite-mcp-server",
   "version": "1.0.0",
   "description": "Model Context Protocol server for SQLite database operations",
   "main": "dist/server.js",
   "type": "module",
+  "files": [
+    "dist/",
+    "src/types/",
+    "README.md",
+    "LICENSE"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/arun-gupta/sqlite-mcp-server.git"
+  },
+  "bugs": {
+    "url": "https://github.com/arun-gupta/sqlite-mcp-server/issues"
+  },
+  "homepage": "https://github.com/arun-gupta/sqlite-mcp-server#readme",
     "scripts": {
     "build": "tsc",
     "start": "node dist/server.js",
@@ -24,7 +38,7 @@
     "database",
     "model-context-protocol"
   ],
-  "author": "Your Name",
+  "author": "Arun Gupta",
   "license": "MIT",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^0.4.0",
