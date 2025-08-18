@@ -8,19 +8,19 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // Database path - can be overridden by environment variable
-const dbPath = process.env.SQLITE_DB_PATH || join(__dirname, '../test.db');
+const dbPath: string = process.env.SQLITE_DB_PATH || join(__dirname, '../test.db');
 
 console.log(`Setting up database at: ${dbPath}`);
 
 // Create database and tables
-const db = new sqlite3.Database(dbPath, (err) => {
+const db: sqlite3.Database = new sqlite3.Database(dbPath, (err: Error | null) => {
   if (err) {
     console.error('Error opening database:', err);
     process.exit(1);
   }
   
   // Enable foreign keys
-  db.run('PRAGMA foreign_keys = ON', (err) => {
+  db.run('PRAGMA foreign_keys = ON', (err: Error | null) => {
     if (err) {
       console.error('Error enabling foreign keys:', err);
     }
@@ -28,9 +28,9 @@ const db = new sqlite3.Database(dbPath, (err) => {
 });
 
 // Helper function to run SQL statements
-function runSQL(sql) {
+function runSQL(sql: string): Promise<void> {
   return new Promise((resolve, reject) => {
-    db.run(sql, (err) => {
+    db.run(sql, (err: Error | null) => {
       if (err) {
         reject(err);
       } else {
@@ -41,9 +41,9 @@ function runSQL(sql) {
 }
 
 // Helper function to insert data
-function insertData(sql, params) {
+function insertData(sql: string, params: any[]): Promise<sqlite3.RunResult> {
   return new Promise((resolve, reject) => {
-    db.run(sql, params, function(err) {
+    db.run(sql, params, function(err: Error | null) {
       if (err) {
         reject(err);
       } else {
@@ -53,7 +53,7 @@ function insertData(sql, params) {
   });
 }
 
-async function setupDatabase() {
+async function setupDatabase(): Promise<void> {
   try {
     // Create tables
     await runSQL(`
@@ -133,7 +133,7 @@ async function setupDatabase() {
     console.error('Error setting up database:', error);
     process.exit(1);
   } finally {
-    db.close((err) => {
+    db.close((err: Error | null) => {
       if (err) {
         console.error('Error closing database:', err);
       }

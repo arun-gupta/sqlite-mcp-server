@@ -34,7 +34,7 @@ fi
 
 # Setup sample database
 echo "🗄️  Setting up sample database..."
-node examples/setup-database.js
+npx ts-node examples/setup-database.ts
 echo "✅ Sample database created at test.db"
 
 # Set environment variables

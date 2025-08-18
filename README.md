@@ -283,7 +283,7 @@ sqlite-mcp-server/
 ├── test/
 │   └── test.js           # Test suite
 ├── examples/
-│   ├── setup-database.js  # Database setup script
+│   ├── setup-database.ts  # Database setup script
 │   └── postman-collection.json # Postman collection
 ├── package.json          # Node.js dependencies
 ├── mcp.json             # MCP manifest
