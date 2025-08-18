@@ -2,7 +2,7 @@
   "name": "sqlite-mcp-server",
   "version": "1.0.0",
   "description": "Model Context Protocol server for SQLite database operations",
-  "main": "src/server.js",
+  "main": "dist/server.js",
   "type": "module",
     "scripts": {
     "build": "tsc",

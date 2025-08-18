@@ -10,11 +10,20 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 
-# Install dependencies
-RUN npm ci --only=production && npm cache clean --force
+# Install all dependencies (including dev dependencies for TypeScript build)
+RUN npm ci && npm cache clean --force
+
+# Copy TypeScript configuration
+COPY tsconfig.json ./
 
 # Copy source code
 COPY src/ ./src/
+
+# Build TypeScript to JavaScript
+RUN npm run build
+
+# Remove dev dependencies to reduce image size
+RUN npm prune --production
 
 # Create data directory first (as root)
 RUN mkdir -p /data
@@ -39,4 +48,4 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD node -e "console.log('Health check passed')" || exit 1
 
 # Start server based on mode
-CMD ["sh", "-c", "if [ \"$SERVER_MODE\" = \"http\" ]; then node src/http-wrapper.js; else node src/server-persistent.js; fi"]
+CMD ["sh", "-c", "if [ \"$SERVER_MODE\" = \"http\" ]; then node dist/http-wrapper.js; else node dist/server-persistent.js; fi"]
