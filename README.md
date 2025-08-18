@@ -1,5 +1,12 @@
 # SQLite MCP Server
 
+[![Docker Image CI](https://github.com/arun-gupta/sqlite-mcp-server/workflows/Docker%20Image%20CI/badge.svg)](https://github.com/arun-gupta/sqlite-mcp-server/actions)
+[![npm version](https://img.shields.io/npm/v/@arun-gupta/sqlite-mcp-server)](https://www.npmjs.com/package/@arun-gupta/sqlite-mcp-server)
+[![Docker Pulls](https://img.shields.io/docker/pulls/arungupta/sqlite-mcp-server)](https://hub.docker.com/r/arungupta/sqlite-mcp-server)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Node.js](https://img.shields.io/badge/node-%3E%3D18-brightgreen.svg)](https://nodejs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.9.2-blue.svg)](https://www.typescriptlang.org/)
+
 A Model Context Protocol (MCP) server that provides SQLite database operations through a standardized interface. This server allows AI assistants and other MCP clients to interact with SQLite databases using a set of predefined tools. Includes an optional HTTP wrapper for easy testing and development.
 
 ## Features
@@ -185,7 +192,7 @@ Every push to the `main` branch triggers:
 
 ### 📋 **Workflow Status**
 
-[![Docker Image CI](https://github.com/arun-gupta/sqlite-mcp-server/workflows/Docker%20Image%20CI/badge.svg)](https://github.com/arun-gupta/sqlite-mcp-server/actions)
+The workflow status is shown in the badge at the top of this README.
 
 ### 🔧 **Manual Trigger**
 
