@@ -62,7 +62,7 @@ The servers will be running with a sample database containing:
 
 **Available servers:**
 - **MCP Server**: Ready for stdio communication
-- **HTTP Server**: Available at http://localhost:4000 for Postman/curl testing
+- **HTTP Server**: Available at http://localhost:3001 for Postman/curl testing
 
 ### Option 2: Use Pre-built Docker Image
 
@@ -84,28 +84,28 @@ mkdir -p data
 # Option 1: Docker Hub (recommended)
 docker run -d \
   --name sqlite-mcp-http \
-  -p 4000:4000 \
+  -p 3001:3001 \
   -v $(pwd)/data:/data \
   -e SQLITE_DB_PATH=/data/database.db \
   -e SERVER_MODE=http \
-  -e HTTP_PORT=4000 \
+  -e HTTP_PORT=3001 \
   arungupta/sqlite-mcp-server:latest
 
 # Option 2: GitHub Container Registry
 docker run -d \
   --name sqlite-mcp-http \
-  -p 4000:4000 \
+  -p 3001:3001 \
   -v $(pwd)/data:/data \
   -e SQLITE_DB_PATH=/data/database.db \
   -e SERVER_MODE=http \
-  -e HTTP_PORT=4000 \
+  -e HTTP_PORT=3001 \
   ghcr.io/arun-gupta/sqlite-mcp-server:latest
 
 # Test HTTP endpoints (curl)
-curl http://localhost:4000/health
-curl http://localhost:4000/tables
-curl http://localhost:4000/tables/users
-curl -X POST http://localhost:4000/query \
+curl http://localhost:3001/health
+curl http://localhost:3001/tables
+curl http://localhost:3001/tables/users
+curl -X POST http://localhost:3001/query \
   -H "Content-Type: application/json" \
   -d '{"query":"SELECT * FROM users"}'
 
@@ -248,7 +248,7 @@ docker ps
 docker stop sqlite-mcp sqlite-mcp-http 2>/dev/null || true
 
 # Switch to HTTP mode
-docker run -d --name sqlite-mcp-http -p 4000:4000 -v $(pwd)/data:/data -e SERVER_MODE=http -e HTTP_PORT=4000 sqlite-mcp-server
+docker run -d --name sqlite-mcp-http -p 3001:3001 -v $(pwd)/data:/data -e SERVER_MODE=http -e HTTP_PORT=3001 sqlite-mcp-server
 
 # Switch to MCP mode
 docker run -d --name sqlite-mcp -v $(pwd)/data:/data -e SERVER_MODE=mcp sqlite-mcp-server

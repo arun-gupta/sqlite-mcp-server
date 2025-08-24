@@ -17,7 +17,7 @@ CONTAINER_NAME="sqlite-mcp"
 IMAGE_NAME="sqlite-mcp-server"
 DATA_DIR="./data"
 DB_PATH="/data/database.db"
-HTTP_PORT="4000"
+HTTP_PORT="3001"
 
 # Function to print colored output
 print_status() {
@@ -47,7 +47,7 @@ show_usage() {
     echo "Commands:"
     echo "  build                    Build the Docker image"
     echo "  run                      Run MCP server container (stdio only)"
-    echo "  run-http                 Run container with HTTP wrapper on port 4000"
+    echo "  run-http                 Run container with HTTP wrapper on port 3001"
     echo "  run-custom [PORT]        Run container with HTTP wrapper on custom port"
     echo "  stop                     Stop running containers"
     echo "  clean                    Remove containers"
@@ -60,7 +60,7 @@ show_usage() {
     echo "Examples:"
     echo "  $0 build                 # Build the image"
     echo "  $0 run                   # Run MCP server"
-    echo "  $0 run-http              # Run with HTTP on port 4000"
+    echo "  $0 run-http              # Run with HTTP on port 3001"
     echo "  $0 run-custom 8080       # Run with HTTP on port 8080"
     echo "  $0 restart               # Restart containers"
     echo ""
@@ -138,10 +138,10 @@ run_http() {
     print_status "Starting container with HTTP wrapper..."
     docker run -d \
         --name $container_name \
-        -p $port:4000 \
+        -p $port:3001 \
         -v "$(pwd)/$DATA_DIR:/data" \
         -e SQLITE_DB_PATH=$DB_PATH \
-        -e HTTP_PORT=4000 \
+        -e HTTP_PORT=3001 \
         $IMAGE_NAME \
         node src/http-wrapper.js
     

@@ -27,7 +27,7 @@ class MCPHTTPWrapper {
 
   constructor() {
     this.app = express();
-    this.port = parseInt(process.env.HTTP_PORT || '4000', 10);
+    this.port = parseInt(process.env.HTTP_PORT || '3001', 10);
     this.mcpServer = null;
     this.setupMiddleware();
     this.setupRoutes();

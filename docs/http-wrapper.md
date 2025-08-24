@@ -30,7 +30,7 @@ The SQLite MCP Server includes an optional HTTP wrapper that provides REST-like 
 ./quickstart.sh
 
 # Use HTTP API for testing
-curl http://localhost:4000/health
+curl http://localhost:3001/health
 ```
 
 ### Production
@@ -74,15 +74,15 @@ The HTTP wrapper demonstrates two ways to access the same functionality:
 ### Convenience Endpoints (Easy)
 ```bash
 # List all tables
-curl http://localhost:4000/tables
+curl http://localhost:3001/tables
 
 # Run a query
-curl -X POST http://localhost:4000/query \
+curl -X POST http://localhost:3001/query \
   -H "Content-Type: application/json" \
   -d '{"query": "SELECT * FROM users WHERE active = 1"}'
 
 # Insert a user
-curl -X POST http://localhost:4000/tables/users/insert \
+curl -X POST http://localhost:3001/tables/users/insert \
   -H "Content-Type: application/json" \
   -d '{"data": {"name": "Test User", "email": "test@example.com"}}'
 ```
@@ -90,17 +90,17 @@ curl -X POST http://localhost:4000/tables/users/insert \
 ### Execute Tool Endpoints (MCP Format)
 ```bash
 # List all tables
-curl -X POST http://localhost:4000/tools/call \
+curl -X POST http://localhost:3001/tools/call \
   -H "Content-Type: application/json" \
   -d '{"name": "list_tables", "arguments": {}}'
 
 # Run a query
-curl -X POST http://localhost:4000/tools/call \
+curl -X POST http://localhost:3001/tools/call \
   -H "Content-Type: application/json" \
   -d '{"name": "run_query", "arguments": {"query": "SELECT * FROM users WHERE active = 1"}}'
 
 # Insert a user
-curl -X POST http://localhost:4000/tools/call \
+curl -X POST http://localhost:3001/tools/call \
   -H "Content-Type: application/json" \
   -d '{"name": "insert_row", "arguments": {"table_name": "users", "data": {"name": "Test User", "email": "test@example.com"}}}'
 ```
@@ -155,16 +155,16 @@ npm run dev:http
 # Run with HTTP wrapper (includes both HTTP API and MCP server)
 docker run -d \
   --name sqlite-mcp-http \
-  -p 4000:4000 \
+  -p 3001:3001 \
   -v $(pwd)/data:/data \
   -e SQLITE_DB_PATH=/data/database.db \
   -e SERVER_MODE=http \
-  -e HTTP_PORT=4000 \
+  -e HTTP_PORT=3001 \
   arungupta/sqlite-mcp-server
 
 # Test HTTP endpoints
-curl http://localhost:4000/health
-curl http://localhost:4000/tables
+curl http://localhost:3001/health
+curl http://localhost:3001/tables
 ```
 
 ### Quickstart (Both MCP and HTTP)

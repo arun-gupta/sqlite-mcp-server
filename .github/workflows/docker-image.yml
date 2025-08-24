@@ -37,9 +37,9 @@ jobs:
 
     - name: Test Docker image (HTTP mode)
       run: |
-        docker run -d --name test-http -p 4000:4000 -e SERVER_MODE=http -e HTTP_PORT=4000 arungupta/sqlite-mcp-server:${{ env.IMAGE_TAG }}
+        docker run -d --name test-http -p 3001:3001 -e SERVER_MODE=http -e HTTP_PORT=3001 arungupta/sqlite-mcp-server:${{ env.IMAGE_TAG }}
         sleep 10
-        curl -f http://localhost:4000/health || exit 1
+        curl -f http://localhost:3001/health || exit 1
         docker stop test-http && docker rm test-http
 
     - name: Test Docker image (MCP mode)

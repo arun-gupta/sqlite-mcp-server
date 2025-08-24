@@ -39,7 +39,7 @@ echo "✅ Sample database created at test.db"
 
 # Set environment variables
 export SQLITE_DB_PATH=test.db
-export HTTP_PORT=${HTTP_PORT:-4000}
+export HTTP_PORT=${HTTP_PORT:-3001}
 
 # Function to check and kill processes on a port
 check_and_kill_port() {
